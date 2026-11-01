@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>补码的直觉：模 2^8 的环形刻度</title>
+    <style>
+        :root {
+            --primary: #0f766e;
+            --primary-light: #ccfbf1;
+            --bg-dark: #0f172a;
+            --text-dark: #1e293b;
+            --text-light: #64748b;
+            --accent-orange: #f97316;
+            --accent-blue: #3b82f6;
+            --border-color: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        }
+
+        body {
+            background-color: #f8fafc;
+            color: var(--text-dark);
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+            width: 100%;
+            max-width: 1100px;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* 头部设计 */
+        .header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 15px;
+        }
+
+        .header-decor {
+            width: 6px;
+            height: 32px;
+            background-color: var(--primary);
+            margin-right: 12px;
+            border-radius: 3px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        /* 栅格布局 */
+        .grid-layout {
+            display: grid;
+            grid-template-columns: 1.2fr 1.8fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        @media (max-width: 900px) {
+            .grid-layout {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* 左侧面板：理论与控制 */
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .info-card {
+            background-color: #fafafa;
+            border-left: 4px solid var(--primary);
+            padding: 16px;
+            border-radius: 0 8px 8px 0;
+        }
+
+        .info-card h3 {
+            color: var(--primary);
+            margin-bottom: 8px;
+            font-size: 16px;
+        }
+
+        .info-card ul {
+            list-style-type: none;
+            font-size: 14px;
+            color: #475569;
+            line-height: 1.6;
+        }
+
+        .info-card li {
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+        }
+
+        .info-card li::before {
+            content: "•";
+            color: var(--primary);
+            font-weight: bold;
+            display: inline-block;
+            width: 1em;
+            margin-left: -1em;
+        }
+
+        /* 交互控制区 */
+        .control-box {
+            background: #f1f5f9;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .control-box h3 {
+            font-size: 16px;
+            margin-bottom: 15px;
+            color: var(--text-dark);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            font-size: 14px;
+            font-weight: 600;
+            width: 30px;
+        }
+
+        .input-group input {
+            width: 80px;
+            padding: 8px 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 15px;
+            text-align: center;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .input-group input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(15, 118, 110, 0.15);
+        }
+
+        .btn-calc {
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .btn-calc:hover {
+            background-color: #0d615a;
+        }
+
+        .preset-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .btn-preset {
+            background: white;
+            border: 1px solid #cbd5e1;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            flex: 1;
+            transition: all 0.2s;
+        }
+
+        .btn-preset:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* 右侧面板：可视化环形 */
+        .right-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .canvas-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            aspect-ratio: 1;
+        }
+
+        canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        /* 悬浮提示框 */
+        .tooltip-board {
+            position: absolute;
+            background: rgba(15, 23, 42, 0.9);
+            color: white;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            pointer-events: none;
+            display: none;
+            z-index: 10;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            line-height: 1.5;
+        }
+
+        /* 底部运算链条 */
+        .math-chain-container {
+            margin-top: 35px;
+            background: #fafafa;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .chain-title {
+            font-size: 13px;
+            color: var(--text-light);
+            text-align: center;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .math-chain {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .math-block {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .arrow-block {
+            color: var(--text-light);
+            font-size: 18px;
+        }
+
+        .card-block {
+            background: white;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 10px 18px;
+            text-align: center;
+            min-width: 120px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            transition: border-color 0.3s, transform 0.3s;
+        }
+
+        .card-block.active-start {
+            border-color: var(--accent-blue);
+        }
+
+        .card-block.active-offset {
+            border-color: var(--accent-orange);
+        }
+
+        .card-block.active-result {
+            border-color: var(--primary);
+            background-color: var(--primary-light);
+        }
+
+        .card-bin {
+            font-family: monospace;
+            font-size: 15px;
+            letter-spacing: 1px;
+            color: #0f172a;
+        }
+
+        .card-dec {
+            font-size: 12px;
+            color: var(--text-light);
+            margin-top: 4px;
+            font-weight: 500;
+        }
+
+        /* 动效说明 */
+        .animation-status {
+            text-align: center;
+            font-size: 14px;
+            color: var(--accent-orange);
+            font-weight: 600;
+            margin-top: 10px;
+            height: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <!-- 头部 -->
+    <div class="header">
+        <div class="header-decor"></div>
+        <h1>补码的直觉：模 2⁸ 的环形刻度</h1>
+    </div>
+
+    <!-- 主体栅格 -->
+    <div class="grid-layout">
+
+        <!-- 左侧：控制与理论 -->
+        <div class="left-panel">
+            <div class="info-card">
+                <h3>8位有符号数规则</h3>
+                <ul>
+                    <li><strong>总组合数</strong>：$2^8 = 256$ 种状态（$0 \sim 255$）。</li>
+                    <li><strong>上半圈（正数）</strong>：$0$ 到 $+127$（二进制 `00000000` 到 `01111111`）。</li>
+                    <li><strong>下半圈（负数）</strong>：$-128$ 到 $-1$（二进制 `10000000` 到 `11111111`）。</li>
+                    <li><strong>溢出处理</strong>：超过范围时，硬件直接丢弃第9位（相当于自动对 256 取模）。</li>
+                </ul>
+            </div>
+
+            <!-- 控制面板 -->
+            <div class="control-box">
+                <h3>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                    动态运算演示
+                </h3>
+                <div style="display: flex; gap: 20px; justify-content: space-between;">
+                    <div class="input-group">
+                        <label for="val-a">A:</label>
+                        <input type="number" id="val-a" value="37" min="-128" max="127">
+                    </div>
+                    <div style="font-size: 20px; font-weight: bold; align-self: center; color: #64748b;">+</div>
+                    <div class="input-group">
+                        <label for="val-b">B:</label>
+                        <input type="number" id="val-b" value="-52" min="-128" max="127">
+                    </div>
+                </div>
+
+                <button class="btn-calc" onclick="startSimulation()">开始运行演示</button>
+
+                <div style="margin-top: 15px;">
+                    <span style="font-size: 12px; color: var(--text-light); font-weight: 500;">经典预设：</span>
+                    <div class="preset-buttons">
+                        <button class="btn-preset" onclick="loadPreset(37, -52)">37 - 52 (原图)</button>
+                        <button class="btn-preset" onclick="loadPreset(120, 10)">120 + 10 (正溢出)</button>
+                        <button class="btn-preset" onclick="loadPreset(-120, -10)">-120 - 10 (负溢出)</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-card" style="border-left-color: var(--accent-orange);">
+                <h3>直观几何解释</h3>
+                <p style="font-size: 13px; color: #475569; line-height: 1.5;">
+                    在圆环上，<strong>加上一个正数</strong>等于<strong>顺时针</strong>移动；<br>
+                    <strong>加上一个负数</strong>（即减法）等于<strong>逆时针</strong>移动。<br>
+                    当跨越边界（如 $+127$ 跨越到 $-128$）时，就发生了<strong>溢出</strong>，但在硬件的环形世界里，它只是自然地继续前行。
+                </p>
+            </div>
+        </div>
+
+        <!-- 右侧：环形画布 -->
+        <div class="right-panel">
+            <div class="canvas-container">
+                <canvas id="ringCanvas" width="900" height="900"></canvas>
+                <div class="tooltip-board" id="tooltip"></div>
+            </div>
+            <div class="animation-status" id="animStatus">准备就绪</div>
+        </div>
+
+    </div>
+
+    <!-- 底部：运算链条 -->
+    <div class="math-chain-container">
+        <div class="chain-title">寄存器级运算链条拆解</div>
+        <div class="math-chain">
+            <div class="math-block" id="chain-raw">37 - 52</div>
+            <div class="arrow-block">➔</div>
+            <div class="math-block" id="chain-add">37 + (-52)</div>
+            <div class="arrow-block">➔</div>
+
+            <!-- A 块 -->
+            <div class="card-block active-start">
+                <div class="card-bin" id="card-a-bin">00100101</div>
+                <div class="card-dec" id="card-a-dec">+37</div>
+            </div>
+
+            <div class="math-block">+</div>
+
+            <!-- B 块 -->
+            <div class="card-block active-offset">
+                <div class="card-bin" id="card-b-bin">11001100</div>
+                <div class="card-dec" id="card-b-dec">-52 的补码</div>
+            </div>
+
+            <div class="arrow-block">➔</div>
+
+            <!-- 结果块 -->
+            <div class="card-block active-result">
+                <div class="card-bin" id="card-res-bin">11110001</div>
+                <div class="card-dec" id="card-res-dec">-15</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const canvas = document.getElementById('ringCanvas');
+    const ctx = canvas.getContext('2d');
+    const tooltip = document.getElementById('tooltip');
+    const animStatus = document.getElementById('animStatus');
+
+    // 仿真状态变量
+    let state = {
+        valA: 37,
+        valB: -52,
+        currentPos: 37, // 动画当前指向的刻度位置 (0-255)
+        targetPos: 241,  // 目标刻度位置 (37 - 52 = -15 => 241)
+        stepProgress: 0, // 动画进度 0 ~ 1
+        isAnimating: false,
+        animStage: 'idle' // 'idle', 'showA', 'moving', 'done'
+    };
+
+    // 将有符号 8 位整数转换为 0-255 的刻度索引
+    function toIndex(val) {
+        return (val < 0) ? (256 + val) : val;
+    }
+
+    // 将 0-255 的刻度索引转换为有符号 8 位整数
+    function toSigned(idx) {
+        return (idx > 127) ? (idx - 256) : idx;
+    }
+
+    // 转换为 8 位二进制字符串
+    function toBinStr(val) {
+        const u8 = new Uint8Array(1);
+        u8[0] = val;
+        return u8[0].toString(2).padStart(8, '0');
+    }
+
+    // 初始化与更新输入
+    function updateInputs() {
+        let a = parseInt(document.getElementById('val-a').value) || 0;
+        let b = parseInt(document.getElementById('val-b').value) || 0;
+
+        // 限制边界
+        a = Math.max(-128, Math.min(127, a));
+        b = Math.max(-128, Math.min(127, b));
+
+        document.getElementById('val-a').value = a;
+        document.getElementById('val-b').value = b;
+
+        state.valA = a;
+        state.valB = b;
+
+        // 计算目标
+        let rawSum = a + b;
+        let finalIdx = (toIndex(a) + toIndex(b)) % 256;
+        let finalSigned = toSigned(finalIdx);
+
+        // 更新静态公式链条
+        document.getElementById('chain-raw').innerText = `${a} ${b >= 0 ? '+' : '-'} ${Math.abs(b)}`;
+        document.getElementById('chain-add').innerText = `${a} + (${b})`;
+
+        document.getElementById('card-a-bin').innerText = toBinStr(a);
+        document.getElementById('card-a-dec').innerText = `${a >= 0 ? '+' : ''}${a}`;
+
+        document.getElementById('card-b-bin').innerText = toBinStr(b);
+        document.getElementById('card-b-dec').innerText = `${b} 的补码`;
+
+        document.getElementById('card-res-bin').innerText = toBinStr(finalIdx);
+        document.getElementById('card-res-dec').innerText = `${finalSigned}`;
+    }
+
+    function loadPreset(a, b) {
+        document.getElementById('val-a').value = a;
+        document.getElementById('val-b').value = b;
+        updateInputs();
+        startSimulation();
+    }
+
+    // 启动动画仿真
+    let animationFrameId = null;
+    function startSimulation() {
+        updateInputs();
+        if (animationFrameId) cancelAnimationFrame(animationFrameId);
+
+        state.isAnimating = true;
+        state.animStage = 'showA';
+        state.currentPos = toIndex(state.valA);
+
+        let startIdx = toIndex(state.valA);
+        let offset = state.valB;
+        // 目标位置
+        state.targetPos = (startIdx + offset + 256) % 256;
+
+        state.stepProgress = 0;
+        animate();
+    }
+
+    function animate() {
+        draw();
+
+        if (state.animStage === 'showA') {
+            animStatus.innerText = `定位起点 A = ${state.valA} (刻度: ${toIndex(state.valA)})`;
+            state.stepProgress += 0.02;
+            if (state.stepProgress >= 1) {
+                state.stepProgress = 0;
+                state.animStage = 'moving';
+            }
+        } else if (state.animStage === 'moving') {
+            const steps = Math.abs(state.valB);
+            const dir = state.valB >= 0 ? 1 : -1;
+
+            animStatus.innerText = `沿着圆环移动 ${steps} 格 (${dir > 0 ? '顺时针' : '逆时针'})`;
+
+            state.stepProgress += 0.015; // 控制移动速度
+            if (state.stepProgress >= 1) {
+                state.stepProgress = 1;
+                state.currentPos = state.targetPos;
+                state.animStage = 'done';
+            } else {
+                // 线性插值计算当前在圆环上的临时位置
+                let startIdx = toIndex(state.valA);
+                let totalMove = state.valB;
+                let currentOffset = totalMove * state.stepProgress;
+                state.currentPos = (startIdx + currentOffset + 256) % 256;
+            }
+        } else if (state.animStage === 'done') {
+            let finalVal = toSigned(state.targetPos);
+            animStatus.innerText = `到达终点！结果 = ${finalVal} (二进制: ${toBinStr(state.targetPos)})`;
+            state.isAnimating = false;
+            draw(); // 绘制最后一帧
+            return;
+        }
+
+        if (state.isAnimating) {
+            animationFrameId = requestAnimationFrame(animate);
+        }
+    }
+
+    // 核心绘制逻辑
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+        const radius = 320;
+
+        // 1. 绘制背景圆环轨道
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, 0, 2 * Math.PI);
+        ctx.lineWidth = 24;
+        ctx.strokeStyle = '#f1f5f9';
+        ctx.stroke();
+
+        // 2. 绘制上半圈（正数区间：0 ~ 127）的彩色弧线
+        ctx.beginPath();
+        // 0 刻度在正上方，即 -Math.PI / 2
+        ctx.arc(cx, cy, radius, -Math.PI / 2, -Math.PI / 2 + Math.PI - 0.01, false);
+        ctx.lineWidth = 12;
+        ctx.strokeStyle = 'rgba(15, 118, 110, 0.15)'; // 浅青色
+        ctx.stroke();
+
+        // 3. 绘制下半圈（负数区间：-128 ~ -1）的彩色弧线
+        ctx.beginPath();
+        ctx.arc(cx, cy, radius, -Math.PI / 2 + Math.PI + 0.01, -Math.PI / 2 + 2 * Math.PI, false);
+        ctx.lineWidth = 12;
+        ctx.strokeStyle = 'rgba(249, 115, 22, 0.12)'; // 浅橙色
+        ctx.stroke();
+
+        // 4. 绘制 256 个刻度线（为了清晰，我们每隔 4 个刻度绘制一根长线，其余绘制短线）
+        for (let i = 0; i < 256; i++) {
+            // 索引 i 对应的弧度 (0 刻度在正上方)
+            const angle = -Math.PI / 2 + (i / 256) * 2 * Math.PI;
+            const cos = Math.cos(angle);
+            const sin = Math.sin(angle);
+
+            let tickLen = 8;
+            let tickWidth = 1;
+            let tickColor = '#cbd5e1';
+
+            if (i % 16 === 0) {
+                tickLen = 22;
+                tickWidth = 3;
+                tickColor = '#475569';
+            } else if (i % 4 === 0) {
+                tickLen = 14;
+                tickWidth = 2;
+                tickColor = '#94a3b8';
+            }
+
+            ctx.beginPath();
+            ctx.moveTo(cx + (radius - tickLen) * cos, cy + (radius - tickLen) * sin);
+            ctx.lineTo(cx + radius * cos, cy + radius * sin);
+            ctx.lineWidth = tickWidth;
+            ctx.strokeStyle = tickColor;
+            ctx.stroke();
+        }
+
+        // 5. 绘制关键数字节点标注
+        const labels = [
+            { idx: 0, text: '00000000', val: '0', align: 'center', baseline: 'bottom', offset: -35 },
+            { idx: 64, text: '01000000', val: '+64', align: 'left', baseline: 'middle', offset: 35 },
+            { idx: 127, text: '01111111', val: '+127', align: 'left', baseline: 'middle', offset: 35 },
+            { idx: 128, text: '10000000', val: '-128', align: 'left', baseline: 'middle', offset: 35 },
+            { idx: 192, text: '11000000', val: '-64', align: 'right', baseline: 'middle', offset: -35 },
+            { idx: 241, text: '11110001', val: '-15', align: 'center', baseline: 'top', offset: 35 },
+            { idx: 255, text: '11111111', val: '-1', align: 'right', baseline: 'middle', offset: -35 }
+        ];
+
+        labels.forEach(lbl => {
+            const angle = -Math.PI / 2 + (lbl.idx / 256) * 2 * Math.PI;
+            const cos = Math.cos(angle);
+            const sin = Math.sin(angle);
+
+            // 绘制文字背景小圆点
+            ctx.beginPath();
+            ctx.arc(cx + radius * cos, cy + radius * sin, 6, 0, 2*Math.PI);
+            ctx.fillStyle = '#0f172a';
+            ctx.fill();
+
+            // 绘制文本
+            ctx.fillStyle = '#1e293b';
+            ctx.font = 'bold 15px monospace';
+            ctx.textAlign = lbl.align;
+            ctx.textBaseline = lbl.baseline;
+
+            // 稍微偏移防止重叠
+            const tx = cx + (radius + lbl.offset) * cos;
+            const ty = cy + (radius + lbl.offset) * sin;
+
+            ctx.fillText(lbl.text, tx, ty);
+            ctx.fillStyle = '#64748b';
+            ctx.font = '13px sans-serif';
+            ctx.fillText(`(${lbl.val})`, tx, ty + (lbl.baseline === 'bottom' ? -18 : 18));
+        });
+
+        // 6. 绘制圆心大标题
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillStyle = '#0f172a';
+        ctx.font = 'bold 36px sans-serif';
+        ctx.fillText('模 2⁸ 运算', cx, cy - 20);
+        ctx.fillStyle = '#64748b';
+        ctx.font = '500 20px sans-serif';
+        ctx.fillText('256 个位置循环', cx, cy + 25);
+
+        // 7. 绘制动画动态轨迹与指针
+        if (state.animStage !== 'idle') {
+            const startAngle = -Math.PI / 2 + (toIndex(state.valA) / 256) * 2 * Math.PI;
+            const currentAngle = -Math.PI / 2 + (state.currentPos / 256) * 2 * Math.PI;
+
+            // 绘制走过的轨迹弧线
+            if (state.animStage === 'moving' || state.animStage === 'done') {
+                ctx.beginPath();
+                ctx.arc(cx, cy, radius, startAngle, currentAngle, state.valB < 0);
+                ctx.lineWidth = 10;
+                ctx.strokeStyle = varColor('--accent-orange');
+                ctx.stroke();
+            }
+
+            // 绘制起点 A 的定位标记
+            drawPointer(cx, cy, radius, startAngle, '#3b82f6', `A (${state.valA})`);
+
+            // 绘制当前运动中的指针
+            if (state.animStage === 'moving') {
+                drawPointer(cx, cy, radius, currentAngle, '#f97316', '进行中...');
+            }
+
+            // 绘制终点结果标记
+            if (state.animStage === 'done') {
+                drawPointer(cx, cy, radius, currentAngle, '#0f766e', `结果: ${toSigned(state.targetPos)}`);
+            }
+        }
+    }
+
+    // 辅助绘制指针函数
+    function drawPointer(cx, cy, radius, angle, color, label) {
+        const cos = Math.cos(angle);
+        const sin = Math.sin(angle);
+        const px = cx + radius * cos;
+        const py = cy + radius * sin;
+
+        // 绘制高亮外圈
+        ctx.beginPath();
+        ctx.arc(px, py, 14, 0, 2 * Math.PI);
+        ctx.fillStyle = color;
+        ctx.strokeStyle = '#ffffff';
+        ctx.lineWidth = 3;
+        ctx.fill();
+        ctx.stroke();
+
+        // 绘制引线与标签
+        ctx.beginPath();
+        ctx.moveTo(px, py);
+        ctx.lineTo(cx + (radius - 50) * cos, cy + (radius - 50) * sin);
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+        ctx.stroke();
+
+        ctx.fillStyle = color;
+        ctx.font = 'bold 14px sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.fillText(label, cx + (radius - 65) * cos, cy + (radius - 65) * sin);
+    }
+
+    // 获取 CSS 变量值
+    function varColor(name) {
+        return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+    }
+
+    // 鼠标悬停交互：获取刻度信息
+    canvas.addEventListener('mousemove', function(e) {
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.clientX - rect.left) * (canvas.width / rect.width);
+        const y = (e.clientY - rect.top) * (canvas.height / rect.height);
+
+        const cx = canvas.width / 2;
+        const cy = canvas.height / 2;
+
+        const dx = x - cx;
+        const dy = y - cy;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        // 只有当鼠标靠近圆环轨道时才触发提示
+        if (dist > 260 && dist < 380) {
+            let angle = Math.atan2(dy, dx); // 结果在 -PI 到 PI 之间
+            // 转换为 0 到 2PI，且以正上方为 0 点
+            let adjustedAngle = angle + Math.PI / 2;
+            if (adjustedAngle < 0) adjustedAngle += 2 * Math.PI;
+
+            const idx = Math.round((adjustedAngle / (2 * Math.PI)) * 256) % 256;
+            const signedVal = toSigned(idx);
+
+            tooltip.style.display = 'block';
+            tooltip.style.left = (e.clientX - rect.left + 15) + 'px';
+            tooltip.style.top = (e.clientY - rect.top + 15) + 'px';
+            tooltip.innerHTML = `
+                <strong>刻度索引:</strong> ${idx}<br>
+                <strong>有符号值:</strong> ${signedVal}<br>
+                <strong>二进制补码:</strong> <code>${toBinStr(idx)}</code>
+            `;
+        } else {
+            tooltip.style.display = 'none';
+        }
+    });
+
+    canvas.addEventListener('mouseleave', function() {
+        tooltip.style.display = 'none';
+    });
+
+    // 初始化运行
+    updateInputs();
+    draw();
+</script>
+
+</body>
+</html>

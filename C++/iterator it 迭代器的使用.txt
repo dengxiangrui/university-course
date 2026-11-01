@@ -1,0 +1,106 @@
+vector＜int＞::iterator it 迭代器的使用
+
+
+vector vect;
+vector::iterator it = vect.begin();
+首先定义了一个int类型的向量；然后定义了一个具有int元素的迭代器类型。it的类型就是vector::iterator。
+
+vector
+vector不是一种数据类型，而只是一个类模板，可用来定义任意多种数据类型。vector类型的每一种都指定了其保存元素的类型。因此，vector和vector 都是数据类型。
+
+vector对象（以及其他标准库容器对象）的重要属性就在于可以在运行时高效地添加元素。因为vector增长的效率高，在元素值已知的情况下，最好是动态地添加元素。这种增长方式不同于C语言中的内置数据类型，也不同于大多数其他编程语言的数据类型。特别地，如果读者习惯了C或Java的风格，由于vector元素连续存储，可能希望最好是预先分配合适的空间。但事实上，为了达到连续性，C++的做法恰好相反。
+
+虽然可以对给定元素个数的 vector 对象预先分配内存，但更有效的方法是先初始化一个空 vector 对象，然后再动态地增加元素。
+
+vector迭代器
+除了使用下标来访问vector对象的元素外，标准库还提供了另一种检测元素的方法：使用迭代器（iterator），它是一种允许程序员检查容器内元素，并实现元素遍历的数据类型。
+
+标准库为每一种标准容器（包括vector）定义了一种迭代器类型。迭代器类型提供了比下标操作更一般化的方法：所有的标准库容器都定义了相应的迭代器类型，而只有少数的容器支持下标操作。因为迭代器对所有的容器都适用，现代C++程序更倾向于使用迭代器而不是下标操作访问容器元素，即使对支持下标操作的vector类型也这样。
+
+容器的iterator类型
+
+每种容器类型都定义了自己的迭代器类型，如vector：
+
+vector::iterator iter;
+这条语句定义了一个名为iter的变量，它的数据类型是由vector定义的iterator类型。每个标准库容器类型都定义了一个名为iterator的成员，这里的iterator与迭代器实际类型的含义相同。
+
+不同的容器类定义了自己的iterator类型，用于访问容器内的元素。换句话说，每个容器定义了一种名为iterator的类型，而这种类型支持（概念上的）迭代器的各种行为。
+
+begin和end操作
+每种容器都定义了一对命名为begin和end的函数，用于返回迭代器。如果容器中有元素的话，由begin返回的迭代器指向第一个元素：
+
+vector::iterator iter = ivec.begin();
+
+上述语句把iter初始化为由名为begin的vector操作返回的值。假设vector不空，初始化后，iter即指该元素为ivec[0]。
+
+由end操作返回的迭代器指向vector的“末端元素的下一个”。通常称为超出末端迭代器(off-the-end iterator)，表明它指向了一个不存在的元素。如果vector为空，begin返回的迭代器与end返回的迭代器相同。
+
+由end操作返回的迭代器并不指向vector中任何实际的元素，相反，它只是起一个哨兵（sentinel）的作用，表示我们已处理完vector中所有元素。
+
+vector迭代器的自增和解引用运算
+迭代器类型定义了一些操作来获取迭代器所指向的元素，并允许程序员将迭代器从一个元素移动到另一个元素。
+
+迭代器类型可使用解引用操作符（*操作符）来访问迭代器所指向r 元素：
+
+*iter = 0;
+
+解引用操作符返回迭代器当前所指向的元素。假设iter指向vector对象ivec的第一个元素，那么*iter和ivec[0]就是指向同一个元素。上面这个语句的效果就是把这个元素的值赋为0。
+
+迭代器使用自增操作符向前移动迭代器指向容器中下一个元素。从逻辑上说，迭代器的自增操作和int型对象的自增操作类似。对int对象来说，操作结果就是把int型值“加1”，而对迭代器对象则是把容器中的迭代器“向前移动一个位置”。因此，如果iter指向第一个元素，则++iter指向第二个元素。
+
+由于end操作返回的迭代器不指向任何元素，因此不能对它进行解引用或自增操作。
+
+迭代器的其他运算
+另一对可执行于迭代器的操作就是比较：用==或!=操作符来比较两个迭代器，如果两个迭代器对象指向同一个元素，则它们相等，否则就不相等。
+
+迭代器应用的程序示例
+
+假设已声明了一个vector型的ivec变量，要把它所有元素值重置为0，可以用下标操作来完成：
+
+// reset all the elements in ivec to 0
+
+for (vector::size_type ix = 0; ix != ivec.size(); ++ix)
+
+   ivec[ix] = 0;
+1
+上述程序用for循环遍历ivec的元素，for循环定义了一个索引ix，每循环迭代一次ix就自增1。for循环体将ivec的每个元素赋值为0。
+
+更典型的做法是用迭代器来编写循环：
+
+// equivalent loop using iterators to reset all the elements in ivec to 0
+
+for (vector::iterator iter = ivec.begin();
+
+                     iter != ivec.end(); ++iter)
+
+*iter = 0;  // set element to which iter refers to 0
+1
+2
+3
+for循环首先定义了iter，并将它初始化为指向ivec的第一个元素。for循环的条件测试iter是否与end操作返回的迭代器不等。每次迭代iter都自增1，这个for循环的效果是从ivec第一个元素开始，顺序处理vector中的每一元素。最后，iter将指向ivec中的最后一个元素，处理完最后一个元素后，iter再增加1，就会与end操作的返回值相等，在这种情况下，循环终止。
+
+for循环体内的语句用解引用操作符来访问当前元素的值。和下标操作符一样，解引用操作符的返回值是一个左值，因此可以对它进行赋值来改变它的值。上述循环的效果就是把ivec中所有元素都赋值为0。
+
+通过上述对代码的详细分析，可以看出这段程序与用下标操作符的版本达到相同的操作效果：从vector的第一个元素开始，把vector中每个元素都置为0。
+如果vector为空，程序是安全的。如果ivec为空，则begin返回的迭代器不指向任何元素，由于没有元素，所以它不能指向任何元素——在这种情况下，从begin操作返回的迭代器与从end操作返回的迭代器的值相同，因此for语句中的测试条件立即失败。
+
+const_iterator
+前面的程序用vector::iterator改变vector中的元素值。每种容器类型还定义了一种名为const_iterator的类型，该类型只能访问容器内元素，但不能改变其值。
+
+当我们对普通iterator类型解引用时，得到对某个元素的非const引用。而如果我们对const_iterator类型解引用时，则可以得到一个指向const对象的引用，如同任何常量一样，该对象不能进行重写。
+
+例如，如果text是vector类型，程序员想要遍历它，输出每个元素,可以这样编写程序：
+
+// use const_iterator because we won’t change the elements
+
+for (vector::const_iterator iter = text.begin();
+
+                                iter != text.end(); ++iter)
+
+cout << *iter << endl; // print each element in text
+1
+2
+3
+除了是从迭代器读取元素值而不是对它进行赋值之外，这个循环与前一个相似。由于这里只需要借助迭代器进行读，不需要写，这里把iter定义为const_iterator类型。当对const_iterator类型解引用时，返回的是一个const值。不允许用const_iterator进行赋值：
+
+不要把const_iterator对象与const的iterator对象混淆起来。声明一个const迭代器时，必须初始化迭代器。一旦被初始化后，就不能改变它的值：

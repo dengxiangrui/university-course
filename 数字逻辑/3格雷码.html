@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>格雷码“反射（镜像）”生成原理演示</title>
+    <!-- 引入 Tailwind CSS 用于快速美化界面 -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入 Lucide 图标 -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @keyframes reflectAnim {
+            0% { transform: scaleY(1); opacity: 0.3; }
+            50% { transform: scaleY(-1); opacity: 0.5; }
+            100% { transform: scaleY(-1); opacity: 1; }
+        }
+        .reflect-active {
+            animation: reflectAnim 1.2s ease-in-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans min-h-screen flex flex-col items-center justify-center p-4">
+
+    <div class="max-w-4xl w-full bg-white rounded-2xl shadow-xl border border-slate-100 p-6 md:p-8">
+        <!-- 头部标题 -->
+        <div class="text-center mb-6">
+            <span class="px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-xs font-semibold tracking-wider uppercase">设计溯源 · 交互演示</span>
+            <h1 class="text-2xl md:text-3xl font-bold text-slate-900 mt-2">格雷码的“反射（镜像）”生成法</h1>
+            <p class="text-slate-500 text-sm mt-2 max-w-xl mx-auto">
+                格雷码又称“反射二进制码”。通过将低位码表进行<strong>镜像反射</strong>，并在上半部分补 <code>0</code>、下半部分补 <code>1</code>，即可完美递推出高位码表。
+            </p>
+        </div>
+
+        <!-- 步骤控制区域 -->
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+            <button onclick="setStep(1)" id="btn-step1" class="flex flex-col items-center p-3 rounded-xl border-2 border-indigo-600 bg-indigo-50/50 transition-all">
+                <span class="text-xs text-indigo-600 font-bold">第一步</span>
+                <span class="text-sm font-semibold mt-1">1位基础码</span>
+            </button>
+            <button onclick="setStep(2)" id="btn-step2" class="flex flex-col items-center p-3 rounded-xl border border-slate-200 hover:border-indigo-300 transition-all">
+                <span class="text-xs text-slate-400 font-bold">第二步</span>
+                <span class="text-sm font-semibold mt-1 text-slate-600">放置镜面并反射</span>
+            </button>
+            <button onclick="setStep(3)" id="btn-step3" class="flex flex-col items-center p-3 rounded-xl border border-slate-200 hover:border-indigo-300 transition-all">
+                <span class="text-xs text-slate-400 font-bold">第三步</span>
+                <span class="text-sm font-semibold mt-1 text-slate-600">添加前缀 (0与1)</span>
+            </button>
+            <button onclick="setStep(4)" id="btn-step4" class="flex flex-col items-center p-3 rounded-xl border border-slate-200 hover:border-indigo-300 transition-all">
+                <span class="text-xs text-slate-400 font-bold">第四步</span>
+                <span class="text-sm font-semibold mt-1 text-slate-600">首尾相连循环性</span>
+            </button>
+        </div>
+
+        <!-- 演示主舞台 -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center min-h-[380px]">
+
+            <!-- 左侧说明文字 -->
+            <div class="lg:col-span-5 space-y-4">
+                <div class="bg-indigo-50 border-l-4 border-indigo-500 p-4 rounded-r-lg">
+                    <h3 class="font-bold text-indigo-900 flex items-center gap-2">
+                        <i data-lucide="info" class="w-4 h-4"></i>
+                        <span id="explain-title">1位格雷码基础</span>
+                    </h3>
+                    <p id="explain-desc" class="text-slate-600 text-sm mt-2 leading-relaxed">
+                        我们从最简单的 1 位格雷码开始。1位格雷码只有两个状态：0 和 1。它们之间只相差 1 位。
+                    </p>
+                </div>
+
+                <!-- 动态提示 -->
+                <div id="tip-box" class="text-xs text-amber-600 bg-amber-50 border border-amber-100 rounded-lg p-3 flex items-start gap-2">
+                    <i data-lucide="lightbulb" class="w-4 h-4 shrink-0 mt-0.5"></i>
+                    <span id="tip-text">此时首尾（0和1）也只差一位。</span>
+                </div>
+            </div>
+
+            <!-- 右侧图形演示区 -->
+            <div class="lg:col-span-7 flex flex-col items-center justify-center bg-slate-900 rounded-xl p-6 relative overflow-hidden min-h-[320px]">
+
+                <!-- 循环连接线（第四步显示） -->
+                <div id="loop-line" class="absolute left-1/2 -translate-x-1/2 w-48 h-[240px] border-2 border-dashed border-emerald-400 rounded-full opacity-0 pointer-events-none transition-all duration-700"></div>
+
+                <!-- 码表容器 -->
+                <div class="relative flex flex-col items-center gap-2 z-10 w-full max-w-[240px]">
+
+                    <!-- 上半部分 (原码/前缀0) -->
+                    <div class="w-full space-y-2" id="upper-part">
+                        <div class="flex items-center justify-between bg-slate-800 px-4 py-2.5 rounded-lg border border-slate-700 transition-all duration-500">
+                            <span class="text-xs text-slate-400 font-mono">十进制 0</span>
+                            <div class="font-mono font-bold text-lg tracking-widest">
+                                <span class="prefix text-slate-500 transition-all duration-500 opacity-0">0</span><span class="base text-indigo-400">0</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center justify-between bg-slate-800 px-4 py-2.5 rounded-lg border border-slate-700 transition-all duration-500">
+                            <span class="text-xs text-slate-400 font-mono">十进制 1</span>
+                            <div class="font-mono font-bold text-lg tracking-widest">
+                                <span class="prefix text-slate-500 transition-all duration-500 opacity-0">0</span><span class="base text-indigo-400">1</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 镜像对称轴 -->
+                    <div id="mirror-line" class="w-full flex items-center gap-2 py-1 opacity-0 transition-all duration-500">
+                        <div class="h-[1px] bg-indigo-500/50 flex-grow"></div>
+                        <span class="text-[10px] text-indigo-400 font-bold tracking-wider uppercase flex items-center gap-1">
+                            <i data-lucide="git-commit" class="w-3 h-3"></i> 镜像反射面
+                        </span>
+                        <div class="h-[1px] bg-indigo-500/50 flex-grow"></div>
+                    </div>
+
+                    <!-- 下半部分 (反射码/前缀1) -->
+                    <div class="w-full space-y-2 opacity-0 transition-all duration-500" id="lower-part">
+                        <div id="lower-item-1" class="flex items-center justify-between bg-slate-800 px-4 py-2.5 rounded-lg border border-slate-700">
+                            <span class="text-xs text-slate-400 font-mono">十进制 2</span>
+                            <div class="font-mono font-bold text-lg tracking-widest">
+                                <span class="prefix text-rose-400 transition-all duration-500 opacity-0">1</span><span class="base text-indigo-300">1</span>
+                            </div>
+                        </div>
+                        <div id="lower-item-2" class="flex items-center justify-between bg-slate-800 px-4 py-2.5 rounded-lg border border-slate-700">
+                            <span class="text-xs text-slate-400 font-mono">十进制 3</span>
+                            <div class="font-mono font-bold text-lg tracking-widest">
+                                <span class="prefix text-rose-400 transition-all duration-500 opacity-0">1</span><span class="base text-indigo-300">0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 循环状态提示词 -->
+                <div id="loop-badge" class="absolute bottom-4 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 px-3 py-1 rounded-full text-xs font-semibold opacity-0 transition-all duration-500 flex items-center gap-1">
+                    <i data-lucide="refresh-cw" class="w-3 h-3 animate-spin"></i> 首尾 00 与 10 仅差 1 位，形成闭环！
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 底部控制按钮 -->
+        <div class="flex justify-between items-center mt-8 pt-6 border-t border-slate-100">
+            <button onclick="prevStep()" id="btn-prev" class="px-4 py-2 text-sm font-semibold text-slate-500 hover:text-slate-800 flex items-center gap-1 disabled:opacity-30" disabled>
+                <i data-lucide="chevron-left" class="w-4 h-4"></i> 上一步
+            </button>
+            <div class="text-xs text-slate-400 font-medium">
+                当前步骤: <span id="step-indicator" class="text-indigo-600 font-bold">1</span> / 4
+            </div>
+            <button onclick="nextStep()" id="btn-next" class="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-semibold rounded-lg shadow-md hover:shadow-lg transition-all flex items-center gap-1">
+                下一步 <i data-lucide="chevron-right" class="w-4 h-4"></i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // 初始化 Lucide 图标
+        lucide.createIcons();
+
+        let currentStep = 1;
+
+        const stepsData = {
+            1: {
+                title: "1位格雷码基础",
+                desc: "我们从最基础的 1 位格雷码（0 和 1）开始。此时它们只有一位，彼此相邻，汉明距离为 1。",
+                tip: "观察：此时首尾（0和1）也只差一位。"
+            },
+            2: {
+                title: "放置镜面并进行反射",
+                desc: "在下方放置一面“镜子”。将上半部分的编码（0, 1）像照镜子一样，<strong>镜像反射</strong>到镜子下方，得到（1, 0）。",
+                tip: "注意：反射出来的顺序是倒过来的（1 在上，0 在下）。这保证了临近镜面的两项（1和1）完全一致！"
+            },
+            3: {
+                title: "添加前缀区分新旧码",
+                desc: "为了区分上半部分和下半部分，我们在<strong>上半部分（原码）前面统一补 0</strong>，在<strong>下半部分（反射码）前面统一补 1</strong>。",
+                tip: "神奇之处：因为反射保证了中间相邻项一致，补上 0 和 1 后，中间相邻项（01 与 11）依然只差 1 位！"
+            },
+            4: {
+                title: "首尾相接，形成循环码",
+                desc: "现在我们得到了完整的 2 位格雷码：00, 01, 11, 10。请注意观察首项（00）和尾项（10）——它们也仅仅只差 1 位！",
+                tip: "这就是为什么格雷码也叫“循环码”，它可以首尾无缝相接，非常适合用于圆形的旋转编码器！"
+            }
+        };
+
+        function setStep(step) {
+            currentStep = step;
+            updateUI();
+        }
+
+        function nextStep() {
+            if (currentStep < 4) {
+                currentStep++;
+                updateUI();
+            }
+        }
+
+        function prevStep() {
+            if (currentStep > 1) {
+                currentStep--;
+                updateUI();
+            }
+        }
+
+        function updateUI() {
+            // 1. 更新按钮状态
+            document.getElementById('btn-prev').disabled = currentStep === 1;
+            if (currentStep === 4) {
+                document.getElementById('btn-next').innerHTML = `重新开始 <i data-lucide="rotate-ccw" class="w-4 h-4"></i>`;
+                document.getElementById('btn-next').onclick = () => setStep(1);
+            } else {
+                document.getElementById('btn-next').innerHTML = `下一步 <i data-lucide="chevron-right" class="w-4 h-4"></i>`;
+                document.getElementById('btn-next').onclick = nextStep;
+            }
+            lucide.createIcons();
+
+            // 2. 更新步骤导航高亮
+            for (let i = 1; i <= 4; i++) {
+                const btn = document.getElementById(`btn-step${i}`);
+                if (i === currentStep) {
+                    btn.className = "flex flex-col items-center p-3 rounded-xl border-2 border-indigo-600 bg-indigo-50/50 transition-all";
+                    btn.querySelector('span:first-child').className = "text-xs text-indigo-600 font-bold";
+                    btn.querySelector('span:last-child').className = "text-sm font-semibold mt-1 text-slate-800";
+                } else {
+                    btn.className = "flex flex-col items-center p-3 rounded-xl border border-slate-200 hover:border-indigo-300 transition-all";
+                    btn.querySelector('span:first-child').className = "text-xs text-slate-400 font-bold";
+                    btn.querySelector('span:last-child').className = "text-sm font-semibold mt-1 text-slate-600";
+                }
+            }
+
+            // 3. 更新文字说明
+            document.getElementById('step-indicator').innerText = currentStep;
+            document.getElementById('explain-title').innerText = stepsData[currentStep].title;
+            document.getElementById('explain-desc').innerHTML = stepsData[currentStep].desc;
+            document.getElementById('tip-text').innerText = stepsData[currentStep].tip;
+
+            // 4. 控制图形区域动画
+            const mirrorLine = document.getElementById('mirror-line');
+            const lowerPart = document.getElementById('lower-part');
+            const prefixes = document.querySelectorAll('.prefix');
+            const loopLine = document.getElementById('loop-line');
+            const loopBadge = document.getElementById('loop-badge');
+
+            // 重置所有状态
+            mirrorLine.classList.add('opacity-0');
+            lowerPart.classList.add('opacity-0');
+            loopLine.classList.remove('opacity-100');
+            loopLine.classList.add('opacity-0');
+            loopBadge.classList.add('opacity-0');
+            prefixes.forEach(p => p.classList.add('opacity-0'));
+
+            if (currentStep >= 2) {
+                // 显示镜面和反射出来的下半部分
+                mirrorLine.classList.remove('opacity-0');
+                lowerPart.classList.remove('opacity-0');
+
+                // 模拟反射动画效果
+                document.getElementById('lower-item-1').style.transform = 'translateY(5px)';
+                document.getElementById('lower-item-2').style.transform = 'translateY(5px)';
+                setTimeout(() => {
+                    document.getElementById('lower-item-1').style.transform = 'translateY(0)';
+                    document.getElementById('lower-item-2').style.transform = 'translateY(0)';
+                }, 50);
+            }
+
+            if (currentStep >= 3) {
+                // 显示前缀 0 和 1
+                prefixes.forEach(p => p.classList.remove('opacity-0'));
+            }
+
+            if (currentStep === 4) {
+                // 显示循环连接线和徽章
+                loopLine.classList.remove('opacity-0');
+                loopLine.classList.add('opacity-100');
+                loopBadge.classList.remove('opacity-0');
+            }
+        }
+    </script>
+</body>
+</html>

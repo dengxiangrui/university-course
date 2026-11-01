@@ -1,0 +1,196 @@
+\documentclass[12pt,a4paper]{ctexart} % 中文文档类，支持中文
+
+\usepackage{amsmath,amssymb,booktabs,graphicx}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+\usepackage{hyperref}
+
+\title{问题1：基于 Armington 与 VAR 的中美巴阿大豆贸易关税冲击分析}
+
+\begin{document}
+\maketitle
+
+\section{问题分析}
+
+美国、巴西和阿根廷是全球主要大豆出口国，而中国是最大的大豆进口国。
+在“互惠关税”的政策背景下，美国平均关税水平显著上升，
+与此同时，伴随中国等国家的对等反制关税，使得中美大豆贸易受到冲击。
+而巴西、阿根廷大豆对华出口则显著增加，呈现出典型的贸易转移效应。
+
+问题四的解决方法采用两层模型结构：一种是基于 Armington 偏好的静态贸易分配模型，
+用来刻画给定价格与关税水平下中国进口份额的决定机制；
+另一种是基于多变量向量自回归（VAR）的动态模型，
+用来刻画关税冲击对价格与数量的多期动态影响，
+并与静态结构相结合从而得到出口量和出口额的时序预测。
+
+\section{模型建立}
+
+\subsection{静态 Armington 贸易分配模型}
+
+设中国从美国（US）、巴西（BR）、阿根廷（AR）三国进口大豆，
+在年份 $t$ 的进口数量分别为 $q_{i,t}$，总进口量为
+\begin{equation}
+  D_t = \sum_{i \in \{\mathrm{US,BR,AR}\}} q_{i,t}.
+\end{equation}
+而对应的市场份额为
+\begin{equation}
+  \hat{s}_{i,t} = \frac{q_{i,t}}{D_t}.
+\end{equation}
+
+我们根据 Armington 偏好假设，不同来源国的大豆被视为差异化产品，
+因此中国的进口需求可写为 CES 型效用最大化问题。
+在给定含关税到岸价 $P_{i,t}$ 时，便可得到如下的份额表达式：
+\begin{equation}
+  s_{i,t}(\lambda)
+  = \frac{\exp\big(-\lambda P_{i,t}\big)}
+         {\sum_{j} \exp\big(-\lambda P_{j,t}\big)},
+  \label{eq:armington_share}
+\end{equation}
+其中 $\lambda>0$ 为价格敏感度参数，
+$P_{i,t}$ 则由生产成本、运费、关税等共同决定。
+而在实证上，我们利用 UN Comtrade 公布的中国自各国大豆进口
+贸易额和数量计算 $P_{i,t}$，
+以观测份额 $\hat{s}_{i,t}$ 为目标，
+以便于通过最小二乘法估计 $\lambda$：
+\begin{equation}
+  \min_{\lambda}
+  \sum_t \sum_i 
+  \big( \hat{s}_{i,t} - s_{i,t}(\lambda) \big)^2 .
+  \label{eq:lambda_est}
+\end{equation}
+
+当假设美国对华大豆加征额外关税 $\tau$ 时，
+美国大豆含税到岸价变为
+\begin{equation}
+  P'_{\mathrm{US},t} = P_{\mathrm{US},t} (1+\tau),
+\end{equation}
+而其他国家大豆价格不变。
+此时，各国新的理论份额变为
+\begin{equation}
+  s'_{i,t} = 
+  \frac{\exp\big(-\lambda P'_{i,t}\big)}
+       {\sum_{j} \exp\big(-\lambda P'_{j,t}\big)}.
+\end{equation}
+假定中国总进口需求 $D_t$ 在短期内不变，
+则关税调整后的出口量和出口额分别为
+\begin{align}
+  q'_{i,t} &= s'_{i,t} \, D_t, \\
+  E'_{i,t} &= q'_{i,t} \, P'_{i,t},
+\end{align}
+据此即可计算三国出口量与出口额的再次分配。
+
+\subsection{多期动态 VAR 模型}
+
+上面的静态模型揭示了某一时期给定价格与关税水平下的贸易分配，
+但无法反映关税冲击在多期内对产量、价格和贸易结构的动态影响。
+为了解决这个问题，我们使用了多变量向量自回归（VAR）模型。
+
+先构造向量变量
+\begin{equation}
+  \mathbf{y}_t =
+  \begin{bmatrix}
+    \ln q_{\mathrm{US},t} \\
+    \ln q_{\mathrm{BR},t} \\
+    \ln q_{\mathrm{AR},t} \\
+    \ln P_{\mathrm{US},t} \\
+    \tau_t
+  \end{bmatrix},
+\end{equation}
+其中 $\tau_t$ 表示美国大豆面临的关税水平
+（可以是中国对美加征关税，也可以是等价的广义贸易成本指标）。
+假设 $\mathbf{y}_t$ 满足 VAR($p$) 模型：
+\begin{equation}
+  \mathbf{y}_t = \mathbf{c}
+  + A_1 \mathbf{y}_{t-1} + \cdots + A_p \mathbf{y}_{t-p}
+  + \boldsymbol{\varepsilon}_t,
+  \label{eq:var}
+\end{equation}
+其中 $A_k$ 为待估系数矩阵，$\boldsymbol{\varepsilon}_t$ 为白噪声。
+
+利用近十年年中国自三国大豆进口量与价格序列，
+采用我们之前提到的最小二乘法来估计 VAR 模型。
+在获得估计结果后，便可以构造关税冲击的脉冲响应函数（IRF），
+从而可以考察 $\tau_t$ 上升一个单位时，
+$\ln q_{\mathrm{US},t+h}$、$\ln q_{\mathrm{BR},t+h}$ 等
+在未来 $h$ 时间内的动态响应。
+
+进一步地，我们结合静态 Armington 结构，
+在每一期都利用 VAR 预测得到的价格路径
+来计算理论份额 $s_{i,t}$，
+便可得到关税冲击下多期的出口量与出口额路径
+$q_{i,t}, E_{i,t}$。
+完成以上的步骤以后，对动态贸易均衡意义下的情景预测便简单许多了。
+
+\section{模型预测与结果}
+
+\subsection{参数估计与拟合表现}
+
+首先我们使用 UN Comtrade 贸易数据计算
+近十年中国自美国、巴西、阿根廷大豆进口份额与单位价格，
+再根据式 \eqref{eq:lambda_est} 来估计价格敏感度参数 $\lambda$。
+
+估计结果表明，
+模型对样本期份额的拟合误差较小，
+这也直接说明了 Armington 结构能够较好地刻画
+大豆进口份额对价格差异的敏感性。
+
+随后，我们使用式 \eqref{eq:var} 的 VAR($p$) 模型
+（阶数由 AIC/BIC 准则选择），
+对 $\ln q_{i,t}$、$\ln P_{\mathrm{US},t}$、
+$\tau_t$ 等变量进行初步估计。
+
+结果显示，美国关税水平上升会显著降低
+美国对华大豆的出口量，
+与此同时，巴西和阿根廷的出口量有所上升，
+呈现出之前那所提到过的贸易转移效应（
+它会逐步累积并趋于新的均衡）。
+
+\subsection{情景模拟：美国额外加征关税的影响}
+
+以最近一年 $t_0$ 为基准，
+假设美国大豆面临的综合关税水平
+从 $\tau_{t_0}$ 上升至 $\tau_{t_0}+\Delta\tau$，
+对应地，美国大豆含税价格变为
+\begin{equation}
+  P'_{\mathrm{US},t_0} = P_{\mathrm{US},t_0}(1+\Delta\tau) .
+\end{equation}
+在静态 Armington 模型下，
+可得各国新的市场份额 $s'_{i,t_0}$，从而得到
+出口量 $q'_{i,t_0}$ 与出口额 $E'_{i,t_0}$ 的再分配。
+
+同时，在 VAR 模型中施加同样的关税冲击，
+通过脉冲响应分析得到未来若干期的
+$\ln q_{i,t_0+h}$ 响应路径，
+指数化后得到数量 $q_{i,t_0+h}$，
+再结合价格预测得到出口额 $E_{i,t_0+h}$ 的动态轨迹。
+
+\section{预测结果分析}
+
+静态模型结果表明，
+在给定基准需求 $D_{t_0}$ 下，
+美国额外加征 $\Delta\tau$ 的关税
+将会显著提高美国大豆的相对价格，
+使得美国的市场份额从 $s_{\mathrm{US},t_0}$ 降至 $s'_{\mathrm{US},t_0}$，
+而巴西和阿根廷的份额则会相应提高。
+若 $\Delta\tau$ 较大，
+美国对华大豆出口量便会显著下降，
+而巴西和阿根廷的出口量会因此明显上升，
+贸易转移效应由此体现。
+
+动态 VAR 模型相比于静态模型则进一步揭示，
+这一次的关税冲击并非一次性的影响，
+而将在数个年度内都会持续传导：
+短期内美国大豆出口量会迅速回落，
+而巴西出口量快速快速增长从而填补缺口；
+另外，从中长期来看，
+中国的总大豆进口量会有所收缩，
+国内替代或其他来源国可能会弥补一部分缺口，
+三国出口结构在未来相当长的一段时间里将逐步收敛到新的均衡水平。
+
+我们认为，美国提高关税虽然在短期内
+可能实现其国内政治或者财政目标，
+但当我们不局限于此，而是从全球大豆产业链视角来看，
+其结果必然是是削弱美国在中国市场的大豆份额，
+从而间接增强了巴西与阿根廷的竞争地位。
+
+\end{document}

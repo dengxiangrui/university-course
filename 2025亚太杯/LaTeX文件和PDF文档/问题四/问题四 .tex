@@ -1,0 +1,117 @@
+\documentclass[11pt]{article}
+\usepackage{ctex}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{float}
+
+\geometry{a4paper, left=2cm, right=2cm, top=2cm, bottom=2cm}
+
+\title{\textbf{问题四：基于 Lotka-Volterra 模型的关税政策动态效应分析}}
+\author{}
+\date{}
+
+\begin{document}
+
+\maketitle
+\vspace{-0.8cm}
+
+\section{问题分析}
+
+\subsection{问题理解}
+我们的主要目的是分析特朗普2.0时期（2025-2029）激进关税政策对关税收入和进口贸易额的动态影响，所以我们要重点解决：(1) 关税税率变化对进口的影响；(2) 关税收入可能出现的短期激增但中期下滑的机制；(3) "最优税率"的存在性及拉弗曲线效应。
+
+\subsection{数据背景}
+\textbf{历史阶段（2017-2024）}：平均关税税率约为1.4\%，与此同时进口额从2.5万亿美元增至约3万亿美元，关税收入也从35亿增至80亿美元。
+
+\textbf{政策冲击（2025起）}：对所有进口征收10-20\%普遍关税，对华商品征收60\%关税，有效税率预计翻倍至约3\%。
+
+\subsection{建模思路}
+我们可以认为关税收入与进口额存在着"捕食者-被捕食者"动态关系：关税收入（捕食者）依赖进口贸易（被捕食者），但过度征税会"捕杀"税基，最终导致自身"饥饿"。其中，生态学类比为：被捕食者对应进口额$x(t)$（税基）；而捕食者对应关税收入$y(t)$；捕食效率最终对应有效税率$\delta$。
+
+\section{模型建立}
+
+\subsection{核心假设}
+(1) 无关税时进口回以固定增长率$\alpha$增长；
+
+(2) 而关税抑制作用与$xy$乘积成正比；
+
+(3) 关税收入增长会依赖税基$x$和税率$\delta$；
+
+(4) 收入存在自然耗散率$\gamma$。
+
+\subsection{微分方程组}
+\begin{equation}
+    \begin{cases}
+        \dfrac{dx}{dt} = \alpha x - \beta x y \\[8pt]
+        \dfrac{dy}{dt} = \delta x y - \gamma y
+    \end{cases}
+\end{equation}
+
+其中：$x(t)$为进口额（十亿美元），$y(t)$为关税收入（十亿美元），$\alpha$为贸易自然增长率（年$^{-1}$），$\beta$为贸易抑制系数（(B\$)$^{-1}$年$^{-1}$），$\delta$为有效关税税率（(B\$)$^{-1}$年$^{-1}$），$\gamma$为耗散率（年$^{-1}$）。
+
+\subsection{平衡点分析}
+非平凡平衡点：$x^* = \gamma/\delta$，$y^* = \alpha/\beta$。\textbf{其对应经济含义为}：假如平衡进口额与税率成反比，且税率越高长期进口越少，就会体现拉弗曲线效应。线性化分析表明了平衡点为中心点（纯虚特征值），系统将会做周期性振荡。
+
+\section{模型求解}
+
+\subsection{参数标定}
+
+\begin{table}[H]
+\centering
+\caption{模型参数}
+\begin{tabular}{lccc}
+\toprule
+\textbf{参数} & \textbf{Phase 1 (2017-2024)} & \textbf{Phase 2 (2025-2029)} & \textbf{单位} \\
+\midrule
+$\alpha$ & 0.05 & 0.05 & 年$^{-1}$ \\
+$\beta$ & $1\times10^{-5}$ & $1.5\times10^{-5}$ & (B\$)$^{-1}$年$^{-1}$ \\
+$\delta$ & $8\times10^{-4}$ & $1.6\times10^{-3}$ & (B\$)$^{-1}$年$^{-1}$ \\
+$\gamma$ & 1.5 & 1.5 & 年$^{-1}$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+其中Phase 1反映历史低税率环境，而Phase 2则体现激进关税政策：如果有效税率翻倍，则导致抑制系数增大50\%。
+
+\subsection{数值求解与结果}
+我们采用Runge-Kutta四阶方法（Python `odeint`），Phase 1以$(x_0, y_0) = (2500, 35)$为初始条件求解至2024年，而Phase 2以2024年终点状态为新初始条件继续求解。
+
+\begin{table}[H]
+\centering
+\caption{时间节点预测值}
+\begin{tabular}{ccc}
+\toprule
+\textbf{年份} & \textbf{进口额(B\$)} & \textbf{关税收入(B\$)} \\
+\midrule
+2017 & 2500 & 35.0 \\
+2024 & 2920 & 78.6 \\
+2025 & 2850 & 92.4 \\
+2026 & 2650 & \textbf{105.8} \\
+2027 & 2320 & 98.2 \\
+2029 & 1580 & 58.1 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\textbf{发现}：关税收入在2026年达到峰值（106亿美元），随后便会因税基崩溃急剧下滑，到2029年骤降至58亿美元，相比于峰值下降了45\%，甚至低于2024年水平，进口额则暴跌46\%。
+
+\section{预测结果}
+
+\subsection{动态演化机制}
+\textbf{短期（2025-2027）：价格效应主导}。税率突然翻倍，而税基$x$尚未显著下降（带有明显的滞后效应），导致$dy/dt$会急剧上升。进口企业还未完成供应链调整，只能承受高关税负担，最终，关税收入快速攀升至峰值。
+
+\textbf{中期（2027-2029）：变化为数量效应主导}。抑制项$-\beta xy$反而占据主导，$dx/dt$转负。伴随着$x$的急剧下降，$\delta xy$减小，$dy/dt$也转负。进口替代效应、贸易转移效应、需求萎缩效应综合叠加，导致税基崩溃速度超过税率提升效果。
+
+\subsection{相位图分析}
+Phase 1轨迹缓慢螺旋式靠近平衡点$(1875, 5000)$，系统相对稳定。Phase 2轨迹先被"推向"右上方（收入激增），随后急剧向左下移动（因为税基崩溃），到达新平衡点$(937.5, 3333)$，进口额下降50\%。
+
+关键洞察：平衡点大幅左移，使系统无法自发地回到原轨道（路径依赖）；高税率区域向量场指向左下，可能存在强烈的"向下拉力"：导致进入"收入激增-税基崩溃"恶性循环。
+
+\subsection{拉弗曲线验证}
+模型明确验证了最优税率$\delta^* \approx \alpha/(2\beta x_{\text{avg}}) \approx 1.2\times10^{-3}$的存在。特朗普2.0的$\delta_2 = 1.6\times10^{-3} > \delta^*$，已经进入了拉弗曲线右侧，因此提高税率反而会减少长期收入。
+
+
+
+\end{document}

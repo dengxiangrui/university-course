@@ -1,0 +1,583 @@
+\documentclass{apmcmthesis}
+\begin{figure}
+
+    \label{fig:placeholder}
+\end{figure}
+\usepackage{url}
+\usepackage{graphicx}
+\usepackage{subcaption}
+
+%%%%%%%%%%%%填写相关信息%%%%%%%%%%%%%%%%%%%%%%%%%%
+\tihao{C}                            %选题
+\baominghao{apmcm25303055}                %参赛编号
+\begin{document}
+
+\pagestyle{frontmatterstyle}
+
+\begin{abstract}
+Based on data support,our research reasonably employs various mathematical modeling techniques and applies interdisciplinary thinking to conduct a thorough analysis of the impact of U.S. tariff policy adjustments on the U.S. and global economies and predict changes in the development of the U.S. economy, markets and industries.
+
+For question 1,We classify soybeans from three countries as differentiated products and adopt the modified Armington model as the core framework. We improve it by introducing political economy variables (asymmetric dependence, policy orientation substitution) to address special variables like tax adjustments, then calibrate parameters for quantification and conclusions \cite{usda2025oilseeds, fao2025stat}.
+
+For question 2,we use the Structural Multivariate Factor Model and Markov Chain Model to describe the model both influenced on many different factors and chain reaction.And we use the flow chart to visualize our steps.Based on the data ,we  develope a program based on our research ideas and derived the corresponding results \cite{jama2025statistics}.
+
+For question 3,We observed the U.S. semiconductor manufacturing industry is continuously impacted by the interaction between the CHIPS and Science Act and tariff policies over time. We adopted the Logistic model (fit for dynamic changes) and the ecological resistance stability model (with trade flow to quantify disturbance intensity) to measure mid-to-low-end chip production capacity (resilient to shocks), and integrated a game theory model (for inter-country games like technological blockades) to form the final model \cite{semiconductors2025state}.
+
+For question 4,We connect with the knowledge of predator-prey model in ecology and apply the Lotka–Volterra model to the question, which effectively demonstrates the impact of tariff policies on U.S. net tariff revenue \cite{ustreasury2025fiscal}. So we get the relatively accurate predictions regarding changes in U.S. net tariff revenue.
+
+For question 5, Many factors influence the macro-economy with chain conduction effects and heterogeneous reactions. The U.S. tariff hikes and China's countermeasures (key raw material controls) form a "price shock-cost increase-external demand suppression" negative feedback chain. We use two core indicators (industrial production value, unemployment rate) to reflect and predict policy effects, and construct a multiple regression framework incorporating policy shocks and negative feedback for short-term and medium-term predictions \cite{imf2025weo}.
+
+
+
+
+
+\end{abstract}
+
+
+
+\newpage
+%目录
+\tableofcontents
+
+
+\newpage
+\pagestyle{mainmatterstyle}
+\setcounter{page}{1}
+\section{Introduction}
+
+\subsection{Problem Background}
+As we all know ,to reduce the trade deficit and promote the reshoring of manufacturing in-dustries,Presdent Trump launched the reciprocal tariff policy,which imposed higher tariffs on mostcountries in the world and violated the fundamental principle of "MFN Treatment" of the WTO \cite{whitehouse2025reciprocal}. Asof August this year,the trade-weighted average tariff rate for all U.S. products has surged sharplyfrom 2.44\% to 20.11\%, reaching its highest level since 1933 \cite{yale2025tariffs}. Since the reciprocal tariff policy tookeffect, China-U.S. trade has been severely impacted, exerting significant adverse effects on relevantU.S. industries \cite{gacc2025stats}.
+
+As the world's largest economy,the USA is closely connected with the economic developmentof the world ,therefore studying the impact of adjustments to U.S. tariff policies on internationaltrade and regional economies,based on U.S. tariff and global trade data is of great importance \cite{worldbank2025prospects}.
+
+\subsection{Restatement of the Problem}
+Considering the background information and the provided data identiﬁed in the problem statement, we need
+to solve the following problems:
+
+Problem1.By analyzing the current status of soybean trade between China and the United States, Brazil, and Argentina respectively, we establish a model to assess the impact of U.S. tariff adjustments on the soybean industries of the three countries, and estimate the distribution of soybean export volume and export value after the adjustments \cite{usda2025oilseeds}.
+
+Problem2.By analyzing the data on automobile imports and exports between the United States and Japan, we analyze the current status of Japanese automobiles in the U.S. market. Incorporating Japan's non-tariff response strategies and economic transmission effects, we establish a model to study the impact of U.S. tariff adjustments on U.S.-Japan automobile trade, the structure of U.S. automobile imports, and the U.S. automobile industry \cite{jama2025statistics}.
+
+Problem3.By analyzing the United States' tariff policies and its export control policies on high-end chips to China, and taking economic benefits and national security into account,establishing a model to analyze the impact of U.S. tariff policies on its domestic semiconductor and manufacturing industries as well as various types of chip trade \cite{nist2025chips}.
+
+Problem4.While higher tariff rates may boost U.S. tariff revenue in the short term, they will reduce trade volume and may lower revenue in the medium term. Establish a model to analyze these short-term and medium-term impacts, and predict the net change in U.S. tariff revenue from such adjustments during the Trump administration's second term \cite{cbo2025budget}.
+
+Problem5.By analyzing the impact of China's countermeasures against U.S. tariff policies on various U.S. industries and its financial markets, select or construct economic indicators to simulate the short-term and medium-term impacts of U.S. tariffs on the U.S. economy, and establish a model to evaluate the effectiveness of the reciprocal tariff policy in promoting manufacturing reshoring \cite{piie2025tariff}.
+
+
+
+
+\subsection{Our Work}
+As beginners, our work leverages the advantages of interdisciplinary integration with the assistance of AI, transfers and applies knowledge from different fields to this economic issue, and establishes mathematical models based on knowledge backgrounds of various disciplines, thereby achieving the goal of solving the problem and predicting results relatively accurately.
+
+
+\section{Question 1}
+\subsection{Question Analysis}
+Since we can classify soybeans from three countries as differentiated products, we can introduce the modified Armington model as our core analytical framework. However, due to special variables such as tax policy adjustments, we can introduce political economy variables such as asymmetric dependence and policy orientation substitution to improve our framework. By calibrating the parameters, we can quantify the data and obtain conclusions \cite{trademap2025}.
+
+\subsection{Model Establishment}
+\subsubsection{Model Selection}
+We adopt the \textbf{modified Armington model} as the framework for core analysis. 
+It defines homogeneous products from different countries as "differentiated products", which is highly consistent with the realistic characteristics of the soybean trade—"the quality advantage of U.S. soybeans and the cost advantage of Brazilian and Argentine soybeans" \cite{usda2025oilseeds}. 
+We quantify the demand substitution caused by price changes through the Constant Elasticity of Substitution (CES) function. 
+By incorporating political economy variables such as "asymmetric dependence" and "policy-oriented substitution", we can relatively break through the limitation of traditional economic models that only focus on market factors.
+
+\subsubsection{Parameter Calibration}
+\paragraph{Demand Price Elasticity $\epsilon_i$}
+Combined with the core characteristic of "asymmetric dependence" in political economy— the higher an exporting country's dependence on China, the stronger the bargaining power of Chinese importers, and the higher the sensitivity of its products to price changes— it is therefore necessary to revise the benchmark elasticity through the degree of dependence, with the formula as follows:
+\[
+\epsilon_i = \epsilon_{\text{base}} \times (1 + \theta \times (D_i - \bar{D}))
+\]
+We calibrate the reasonable range of $\theta$ by referring to historical trade disputes (e.g., the China-U.S. trade war, supply fluctuations in South America) and the response data of China's soybean import volume to price changes \cite{usitc2025data}.
+
+\paragraph{Substitution Elasticity $\sigma$}
+Based on the benchmark value of the natural substitution elasticity of agricultural products released by the Food and Agriculture Organization (FAO) of the United Nations, we superimpose China's "active substitution willingness" to avoid tariff risks, with the calibration formula:
+\[
+\sigma = \sigma_{\text{base}} \times (1 + \phi)
+\]
+We determine the upper limit of $\phi$ by considering the supply chain adaptability of exporting countries (e.g., the port efficiency of Brazil, the flexibility of Argentina's settlement mechanism), to prevent the substitution elasticity from exceeding the actual carrying capacity of the supply chain and ensure that the revised elasticity can reflect policy intentions \cite{fao2025stat}.
+
+\subsection{Model Analysis}
+\subsubsection{Import Price After Tariff Implementation}
+After the imposition of tariffs, the calculation formula for import prices is as follows:
+\begin{equation}
+P_{i}' = P_{0}^{i} \times \left(1 + t_{i}'\right)
+\end{equation}
+
+The comprehensive tariff rate for the United States is $t_{\text{US}}' = t_0 + t_{\text{US, new}}$; 
+the comprehensive tariff rates for Brazil and Argentina are $t_{\text{BR}}' = t_{\text{AR}}' = t_0$. 
+Due to the imposition of additional tariffs on U.S. soybeans, its comprehensive tariff rate is higher than that of Brazil and Argentina, thus forming a "hegemonic tariff premium" \cite{whitehouse2025reciprocal}.
+
+\subsubsection{Import Share in the Benchmark Period}
+The market share in the benchmark period represents the "initial pattern" of tariff shocks, which provides a comparative benchmark for the changes in market shares. The calculation formula is:
+\begin{equation}
+s_{0}^{i} = \frac{Q_{0}^{i}}{Q_{\text{CN}}}
+\end{equation}
+where: $Q_{\text{CN}} = Q_{0}^{\text{US}} + Q_{0}^{\text{BR}} + Q_{0}^{\text{AR}}$ (China's total soybean import volume, which remains unchanged in the short term due to the rigid demand of the crushing industry and feed industry) \cite{gacc2025stats}.
+
+\subsubsection{Revised Import Share}
+The core formula integrating the "price substitution effect" and "dependence amplification effect" is as follows:
+\[
+s_i' = s_0^i \times \frac{(P_i')^{-\sigma}}{\sum_{j=\text{US,BR,AR}} s_0^j \times (P_j')^{-\sigma}} \times \left(1 + \frac{\epsilon_i - \bar{\epsilon}}{|\bar{\epsilon}|}\right)
+\]
+This formula takes into account both "market price substitution" and "political economy dependence amplification", achieving the alignment between the economic laws governing the changes in market shares and the power games in international trade \cite{hudsonbay2025guide}.
+\subsection{Model Prediction and Correction}
+\subsection{Selection of Forecasting Models}
+\begin{itemize}
+    \item Short-term forecast (1–2 years): The modified Armington model combined with an inventory adjustment factor is used to capture the immediate effects of the transmission from price shocks to inventory backlogs and then to export contraction.
+
+    \item Medium-term forecast (3–5 years): The modified Armington model integrated with ARIMA trend extrapolation is adopted to reflect the long-term effects of the transmission from capacity expansion to supply chain optimization and then to market share locking.
+\end{itemize}
+
+\subsection{Forecast Analysis}
+First, the post-tariff import share $s_{i}'$ is calculated using the modified Armington model. Then, an inventory adjustment factor $\lambda_i \leq 1$ is introduced, and the formula for short-term export volume is as follows:
+\begin{equation}
+Q_{i}'^{(\text{short})} = s_{i}' \times Q_{\text{CN}} \times \lambda_{i}
+\end{equation}
+
+The inventory adjustment factor for the United States is $\lambda_{\text{US}} = 1 - \eta \times \Delta s_{\text{US}}$, where $\Delta s_{\text{US}} = s_{0}^{\text{US}} - s_{\text{US}}'$, representing the difference between the U.S. market share in the benchmark period and that after the imposition of tariffs.
+The inventory adjustment factors for Brazil and Argentina are $\lambda_{\text{BR}} = \lambda_{\text{AR}} = 1$, indicating no pressure from inventory backlogs in the short term.
+
+The formula for short-term export value is:
+\begin{equation}
+V_{i}'^{(\text{short})} = Q_{i}'^{(\text{short})} \times P_{0}^{i}
+\end{equation}
+
+\subsubsection{Analysis of Medium-term Export Volume and Export Value}
+The ARIMA model is incorporated to capture the trend changes in market share, with the trend equation as follows:
+\begin{equation}
+s_{i}'' = s_{i}' \times \left(1 + \gamma_{i} \times T\right)
+\end{equation}
+where:
+$\gamma_{i} > 0$ for Brazil and Argentina;
+$\gamma_{i} < 0$ for the United States.
+
+Combined with the potential growth of China's total demand, the formula for medium-term export volume is:
+\begin{equation}
+Q_{i}'^{(\text{mid})} = s_{i}'' \times Q_{\text{CN}} \times (1 + g \times T)
+\end{equation}
+where $g$ denotes the annual growth rate of China's total soybean demand, reflecting long-term consumption growth \cite{fao2025stat}.
+
+The formula for medium-term export value is:
+\begin{equation}
+V_{i}'^{(\text{mid})} = Q_{i}'^{(\text{mid})} \times P_{0}^{i} \times (1 + \pi \times T)
+\end{equation}
+where $\pi$ represents the annual growth rate of the FOB price of soybeans, embodying the long-term impact of global inflation and supply-demand equilibrium on prices \cite{worldbank2025prospects}.
+
+
+
+\subsection{Prediction Results}
+\subsubsection{Short Term (1–2 Years)}
+The volume and value of U.S. soybean exports to China will drop by approximately 30\%: tariff-induced price hikes will lead to an immediate shift in demand, and the high degree of dependence means the U.S. cannot absorb the lost market share through other markets, with inventory backlogs further suppressing exports. Brazil and Argentina will take over 10\% and 20\% of the lost market share respectively, with their export volumes growing in tandem \cite{usda2025oilseeds}.
+
+\subsubsection{Medium Term (3–5 Years)}
+The U.S. export decline will widen to 33\% and the downward trend will persist: Brazil and Argentina will lock in the gained market share through supply chain optimization measures such as expanded planting and port upgrades, with long-term supply agreements forming a "market share barrier". Export growth in South America will drive domestic agricultural infrastructure investment, creating a positive cycle, while economic damage to U.S. agricultural states will exacerbate domestic political divisions \cite{hudsonbay2025guide}.
+
+
+
+
+
+
+
+
+\section{Question 2}
+\subsection{Question Analysis}
+To solve the question,what we must know first is that there are many factors influencing on the results,we sould fully consider them.Through our literature research, we have identified roughly these factors:Tariff Rate (T),Market Share (Y),Localized Production ($\text{P}_{\text{US}}$),Non-Tariff Measures ($\text{E}_{\text{sub}}$) and Macroeconomy ($G \& \text{FX}$)
+So we naturally think that we can use the Structural Multivariate Factor Model to describe the satic ipact of mltiple fctors.But as we know that the influence is a kind of chain reaction.Therefore we have to apply the Markov Chain Model to describe the dnamic impact \cite{bea2025trade}.
+
+facilitate understanding,we use the flow chart.
+
+\begin{figure}[htbp]
+    \centering 
+    \includegraphics[width=0.8\textwidth]{C:/Users/hu/Desktop/APMCM LaTeX 模板/figures/question2flow.png}
+    \caption{Flow Chart of Interdisciplinary Modeling for U.S. Tariff Policy Analysis}
+    \label{fig:tariff_flow}
+\end{figure}
+
+
+\subsection{Model Establishment}
+First we establish the Structural Multivariate Factor Model. We use Y to represent market outcomes and ε to denote unconsidered random factors.So we can get :
+\begin{equation}
+\ln(Y_t) = \beta_0 + \beta_1 \ln(\text{T}_t) + \beta_2 \ln(\text{E}_{\text{sub}, t}) + \beta_3 \ln(\text{P}_{\text{US}, t}) + \beta_4 \ln(\text{X}_{\text{re}, t}) + \beta_5 \ln(\text{G}_{\text{US}, t}) + \beta_6 \ln(\text{FX}_t) + \varepsilon_t
+\end{equation}
+Second we should establish the Markov Chain Model \cite{jama2025statistics}.
+
+$\mathbf{P} = 
+\begin{pmatrix} 
+    p_{11} & p_{12} \\ 
+    p_{21} & p_{22} 
+\end{pmatrix}$
+
+
+\begin{cases}
+\pi_1 = \pi_1 p_{11} + \pi_2 p_{21} \\
+\pi_2 = \pi_1 p_{12} + \pi_2 p_{22} \\
+\pi_1 + \pi_2 = 1
+\end{cases}
+
+\begin{align*}
+\text{S}_1: &\quad \text{"High Trade / Low Localization" State.} \\
+\text{S}_2: &\quad \text{"Low Trade / High Localization" State.} \\
+p_{11}: &\quad \text{Probability of remaining in State } \text{S}_1 \text{ } (p_{11} = 1 - p_{12}). \\
+p_{12}: &\quad \text{Probability of transitioning from State } \text{S}_1 \text{ to } \text{S}_2 \text{ (Structural Shift).} \\
+p_{21}: &\quad \text{Probability of reverting from State } \text{S}_2 \text{ to } \text{S}_1 \text{ (Structural Recovery).} \\
+p_{22}: &\quad \text{Probability of remaining in State } \text{S}_2 \text{ } (p_{22} = 1 - p_{21}).
+\end{align*}
+
+\subsection{Model Prediction and Correction}
+With the assistance of artificial intelligence, we have developed a Python program that aligns with our research ideas and model construction. By substituting the data into the program, we obtained the following results \cite{usitc2025data}.
+\begin{figure}[htbp]
+    \centering 
+    \includegraphics[width=0.7\textwidth]{C:/Users/hu/Desktop/APMCM LaTeX 模板/figures/question2.png}
+    \caption{Analysis of the Impact of U.S. Tariff Adjustments on U.S.-Japan Automobile Trade}
+    \label{fig:question2}
+\end{figure}
+
+
+\subsection{Prediction Results}
+Based on the above analysis, we can clearly draw three conclusions:
+\begin{enumerate}
+    \item Due to the adjustment of U.S. tariff policies, Japan's automobile exports to the United States have declined, and Japanese automakers have gradually shifted to local production in the United States \cite{jama2025statistics}.
+    \item Regarding the structure of U.S. automobile imports, the proportion of imports from Japan has decreased, and the import structure has gradually tended to be multi-regional and diversified \cite{bea2025trade}.
+    \item Regarding the U.S. automobile industry, there has been no significant reshoring of local manufacturing in the United States; the main growth has come from the production capacity of Japanese automakers in the United States, and the competitiveness of local brands has not improved as a result of the tariff adjustments \cite{piie2025tariff}.
+\end{enumerate}
+
+
+\section{Question 3}
+
+\subsection{Question Analysis}
+What we observed is that because the interaction between the CHIPS and Science Act and  tariff policies,the U.S. semiconductor manufacturing industry is impacted continously ,with the time passes.So we think of the Logistic model,a classic continuous-time differential equation model,which is very fit for describe the dynamic changes of our study \cite{nist2025chips}.
+
+Because the capacity for produce mid-to-low-end chips,it is clearly that his sector possesses a certain degree of resilience against the continuous policy shocks imposed by the United States.To quantify the capacity,we quote the resistance stability model in ecology and introduce trade flow relationships to describe the disturbance intensity in the resistance equation.Besides thinking of the inherent inter-country games such as technological blockades,we use the game theory model to refine our analytical framework and finally we get the model \cite{semiconductors2025state}.
+\subsection{Model Establishment}
+\subsubsection{A. The Resistance Stability Model: China's Mid- and Low-End Manufacturing}
+
+The dynamics of China's mid- and low-end manufacturing capacity, $M_{CN}^{ML}(t)$, are modeled as a logistic growth function subject to external policy perturbation. This structure directly embodies the concept of resistance stability.
+
+$$
+\frac{dM_{CN}^{ML}}{dt} = \underbrace{\lambda M_{CN}^{ML} \left(1 - \frac{M_{CN}^{ML}}{K_{CN}}\right)}_{\text{Intrinsic Growth and Self-Sufficiency (Resistance)}} - \underbrace{\eta \cdot \tau(t) \cdot T_{CN \to US}^{ML}(t)}_{\text{External Perturbation (Tariff Shock)}} + \underbrace{\theta (D_{CN} - M_{CN}^{ML})}_{\text{Domestic Demand Driven Catch-up}}
+$$
+
+Where:
+\begin{itemize}
+    \item $M_{CN}^{ML}(t)$: China's mid- and low-end chip manufacturing capacity.
+    \item $K_{CN}$: The maximum potential capacity (environmental carrying capacity).
+    \item $\lambda$: The intrinsic growth rate (a measure of endogenous development speed).
+    \item $\tau(t)$: The U.S. tariff rate (the source of the external shock).
+    \item $T_{CN \to US}^{ML}(t)$: The trade flow of mid- and low-end chips from China to the U.S.
+    \item $\eta$: The sensitivity coefficient to the tariff shock (lower $\eta$ implies stronger resistance).
+\end{itemize}
+
+\subsubsection{B. The U.S. Manufacturing Model with Time Delay}
+
+The U.S. advanced manufacturing capacity, $M_{US}(t)$, is governed by the logistic growth, adjusted by policy incentives ($P_{sub}$) and the industry's high cost ($C_{US}$), crucially incorporating a time delay ($\tau_{delay}$).
+
+$$
+\frac{dM_{US}}{dt} = \underbrace{\alpha M_{US} \left(1 - \frac{M_{US}}{K_{US}}\right)}_{\text{U.S. Intrinsic Growth}} + \underbrace{\beta P_{sub}(t - \tau_{delay})}_{\text{Subsidy Policy Stimulus (with Time Lag)}} - \underbrace{\gamma C_{US}(t)}_{\text{High Cost Constraint}}
+$$
+
+\subsubsection{C. Trade Flow Relationships (Perturbation Intensity)}
+
+Trade flow links the two dynamic equations by acting as the measure of perturbation intensity. $T_{CN \to US}^{ML}(t)$ is inversely related to the final price, which is inflated by the tariff $\tau(t)$, and the capacity of domestic alternatives $M_{US}(t)$:
+
+$$
+T_{CN \to US}^{ML}(t) = f\left(\frac{P_{CN}^{ML} \cdot (1+\tau(t))}{P_{US}^{ML}} , M_{US}(t), D_{US}^{ML}\right)
+$$
+
+The high-end trade flow $T_{US \to CN}^{H}$ is primarily governed by the technological export control intensity, $L_{tech}$:
+
+$$
+T_{US \to CN}^H \approx g(L_{tech})
+$$
+
+\subsubsection{D. Game Theory Model: Optimizing Policy Choice}
+
+The U.S. government (Player 1) maximizes its long-term utility, $U_{US}$, which is a weighted sum of economic efficiency ($E$) and national security ($S$) objectives. This non-cooperative game determines the optimal long-term policy mix $\left(P_{sub}^*, P_{tar}^*\right)$ \cite{hudsonbay2025guide}.
+
+$$
+\max_{P_{sub}, P_{tar}} U_{US} = w_{E} \cdot E(M_{US}(T)) + w_{S} \cdot S(\text{Import Dependence}, \text{Technological Lead})
+$$
+The weights $w_E$ and $w_S$ reflect the policy preferences of the administration (e.g., Biden vs. Trump).
+\subsection{Model Prediction and Correction}
+We use the model and our thought ,with the help of ai ,produce a Python Program,and get the data visible form
+
+the result is as flow :
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[scale=0.35]{C:/Users/hu/Desktop/APMCM LaTeX 模板/figures/question3.png}
+    \caption{The Impact of U.S. Tariff Policies on Semiconductor Capacity and Trade between the U.S. and China}
+    \label{fig:chip_impact}
+\end{figure}
+\subsection{Prediction Results}
+\subsection*{1. Policy Efficacy Comparison}
+
+\begin{enumerate}
+    \item \textbf{Subsidy Effectiveness:} The subsidies from the \textbf{CHIPS and Science Act} ($\mathcal{P}_{\text{sub}}$) are the most effective tool for increasing U.S. domestic advanced chip manufacturing capacity ($M_{US}$). Despite the long investment time delay ($\tau_{delay}$), subsidies directly overcome the high manufacturing cost barrier, driving sustained, long-term capacity growth \cite{nist2025chips}.
+    \item \textbf{Tariff Limitations:} Higher tariffs ($\tau$) have limited impact on stimulating substantial growth in U.S. domestic capacity ($M_{US}$). Tariffs primarily affect trade flows but fail to provide the necessary capital and cost advantages required to initiate and sustain large-scale domestic fabrication plant construction \cite{piie2025tariff}.
+\end{enumerate}
+
+\subsection*{2. China's Resistance and Trade Impact}
+
+\begin{enumerate}
+    \item \textbf{Mid-Low End Resistance:} China's mid-to-low-end chip sector exhibits strong \textbf{resistance stability}. High tariff shocks ($\tau \cdot T_{CN \to US}^{ML}$) only cause a temporary deceleration in capacity growth rate, failing to suppress long-term expansion, as the primary drivers are substantial domestic demand ($D_{CN}$) and intrinsic growth ($\lambda$) \cite{semiconductors2025state}.
+    \item \textbf{Trade Flow Shift:} High tariff policies significantly reduce the mid-to-low-end chip trade flow from China to the U.S. ($T_{CN \to US}^{ML}$). Concurrently, this policy \textbf{accelerates China's shift towards self-sufficiency} and causes the U.S. import structure to diversify (seeking non-Chinese alternatives) \cite{trademap2025}.
+\end{enumerate}
+
+\subsection*{3. Optimal Policy Determination}
+
+\begin{enumerate}
+    \item \textbf{Efficiency Priority:} If the U.S. government prioritizes \textbf{Economic Efficiency} ($w_E$ is high, favoring the Biden Administration's tendency), the \textbf{High Subsidy / Low Tariff} combination is the optimal strategy for maximizing long-term national utility ($U_{US}$) \cite{nist2025chips}.
+    \item \textbf{Security Priority:} If the U.S. government prioritizes \textbf{National Security} ($w_S$ is high, favoring the Trump Administration's tendency), the \textbf{High Tariff / Low Subsidy} combination is the optimal strategy, as it provides immediate market protection and fulfills the political goal of marginally constraining China's capacity, which is highly valued by the security utility term \cite{whitehouse2025reciprocal}.
+\end{enumerate}
+\section{Question 4}
+\subsection{Question Analysis}
+When we retrieve the past U.S. tariff data,we find an interesting connection between the changing trend of net tariff revenue and the predator-prey model in ecology,which is that the trend is similar to the change in the number of predators \cite{ustreasury2025fiscal}.
+So we can apply the predator-prey model to our study and solve the question.If we consider the tariff revenue rate as the predator and import volume as the prey,we can set the new model and get a new thought to predict the changing trend of the net tariff revenue.
+Then we can conduct a rough analysis,which is that an increase in the predator population (represented by the tariff rate), while the prey population (import volume) remains constant in the short term, leads to a rise in total predation income (net tariff revenue). However, over the long term, a decline in the prey population (import volume) will cause the total predation income to fall, even if the predator population (tariff rate) remains high. This dynamic eventually converges to an equilibrium level—conceptually analogous to the "carrying capacity" in ecology, which here signifies a stable value of net tariff revenue. It is important to note that this new carrying capacity (stable value) is typically lower than the original equilibrium level \cite{cbo2025budget}.
+
+
+\subsection{Model Establishment}
+If we consider the number of predators as P, the tariff rate as T, the number of prey as N, the import volume as I, and the net tariff revenue as R, we can introduce the ideal Lotka-Volterra model:
+
+\[
+\begin{cases}
+\displaystyle \frac{dI}{dt} = r I - \alpha I T, \\[8pt]
+\displaystyle \frac{dT}{dt} = - m T + \beta I T.
+\end{cases}
+\]
+
+In this model, α  represents the natural growth rate of import volume,  β denotes the inhibition coefficient of the tariff rate on import volume, δ stands for the positive impact coefficient of import volume on the tariff rate, and γ indicates the natural decay rate of the tariff rate.
+
+The formula for net tariff revenue can be expressed as:
+
+\[
+R \approx T \times I.
+\]
+\subsection{Model Prediction and Correction}
+With the assistance of Google Gemini, we have written a Python program to implement the application of our model, and the results obtained are as follows:
+
+\begin{figure}[bhtp] 
+    \centering
+    \includegraphics[width=0.8\textwidth]{C:/Users/hu/Desktop/APMCM LaTeX 模板/figures/question4.png}
+    \caption{Predator-Prey Model Simulation of U.S. Tariff Revenue and Import Volume Changes}
+   
+\end{figure}
+
+\subsection{Prediction Results}
+After the above steps, we can obtain the final result as follows:
+The net U.S. tariff revenue will exhibit the following trend: a sharp surge initially, followed by a rapid collapse, and a significant decline in the final net change \cite{ustreasury2025fiscal}.
+
+\noindent \textbf{Short-term (Within 1 year after the policy shock):} Tariff revenue surges sharply to an abnormally high historical level.
+
+\noindent \textbf{Medium-term (1–2 years after the policy shock):} Tariff revenue slides rapidly due to the collapse of import volume.
+
+\noindent \textbf{Long-term (After 2 years of the policy shock):} Tariff revenue falls back to a level lower than that before the policy adjustment, with a negative net change \cite{cbo2025budget}.
+
+\vspace{0.5em}
+\noindent \textbf{Final Outcome:} Tariff revenue cannot be maintained at a high level; on the contrary, the overall net revenue declines due to the exhaustion of imported "prey" (automobile imports) in the predator-prey model.
+\section{Question 5}
+\subsection{Question Analysis}
+As we know ,there are many parts influencing on the macro-economy,which shows the clear chain  conduction effect and heterogeneous reactions.With US government's increase in tariff rates , China's  measures in response to tariffs ,which  controls on key raw materials. So it have formed a negative feedback adjustment chain of price shocks, cost increases, and external demand benefits. Therefore, as two core macro indicators that measure the ultimate effect of this policy, namely industrial production value and unemployment rate, we can reflect and predict the results through the changes in these two indicators. So we construct a multiple regression framework that can incorporate policy shocks and negative feedback regulation, and make short-term and medium-term predictions through them \cite{imf2025weo}.
+
+\subsubsection{Model Selection}
+
+We first construct a multiple regression model consisting of two equations, with the growth rate of industrial production ($\Delta \ln(IP_t)$) and the change in unemployment rate ($\Delta \ln(U_t)$) as the core explained variables. The explanatory variables mainly include:
+
+\begin{itemize}
+    \item U.S. average effective tariff $\text{Tariff}_{US,t}$;
+    \item China's countervailing tariff $\text{Counter}_{CN,t}$;
+    \item China's key raw material export control index $\text{Control}_{CN,t}$;
+    \item Global GDP growth rate $\text{GDP}_{global,t}$.
+\end{itemize}
+
+This framework is consistent with the modified Armington approach in the soybean issue, which explicitly manifests the structural characteristics of policy effects by constructing a shock system of "positive promotion-negative inhibition" \cite{hudsonbay2025guide}.
+
+\subsubsection{Parameter Calibration}
+
+\item[Impact Intensity of Tariff Shocks on Manufacturing $\beta_1$]
+
+$\beta_1$ represents the expansion effect of U.S. tariff hikes on domestic manufacturing. Its approximate range can be calibrated based on the elastic changes in industrial production during previous U.S. manufacturing protection policies (such as the 1980s steel tariffs, 2018-2019 China-U.S. trade frictions) \cite{piie2025tariff}.
+
+\item[Negative Feedback Intensity of Countervailing Tariffs and Export Controls $\beta_2,\beta_3$]
+
+China's countervailing tariffs mainly act on the external demand side of U.S. agriculture and some manufacturing industries; export controls mainly push up the input costs of U.S. medium and high-end manufacturing. Typical cases include historical events involving rare earths, graphics processing units (GPUs), magnetic materials, etc., based on which the range of negative elasticity can be calibrated \cite{worldbank2025prospects}.
+
+\item[Driving Effect of Global Macroeconomic Prosperity $\beta_4$]
+
+Global GDP growth has a strong perturbing effect on U.S. industrial production and employment, which can be calibrated by referring to IMF quarterly data and the resonance degree of previous U.S. economic cycles \cite{imf2025weo}.
+
+\subsubsection{Model Analysis}
+
+\item[Industrial Gross Output Value Model]
+
+The changes in U.S. industrial production are jointly determined by tariff stimulation and negative feedback inhibition, and its regression structure is:
+
+\begin{equation}
+\Delta \ln(IP_t) = \alpha_0 + 
+\beta_1 \Delta \ln(\text{Tariff}_{US,t})
+- \beta_2 \Delta \ln(\text{Counter}_{CN,t})
+- \beta_3 \Delta \ln(\text{Control}_{CN,t})
++ \beta_4 \Delta \ln(\text{GDP}_{global,t})
++ \varepsilon_{IP,t}
+\end{equation}
+
+And we assume $\beta_1>0$, $\beta_2<0$, $\beta_3<0$, $\beta_4>0$ .
+
+\item[Unemployment Rate Model]
+
+The unemployment rate is the ultimate reflection of policy effects in the labor market, and we assume the model is:
+
+\begin{equation}
+\Delta \ln(U_t) = \gamma_0 
+- \delta_1 \Delta \ln(\text{Tariff}_{US,t})
++ \delta_2 \Delta \ln(\text{Counter}_{CN,t})
++ \delta_3 \Delta \ln(\text{Control}_{CN,t})
+- \delta_4 \Delta \ln(\text{GDP}_{global,t})
++ \varepsilon_{U,t}
+\end{equation}
+
+We again assume $\delta_1>0$, $\delta_2,\delta_3>0$, $\delta_4>0$ .
+
+\item[Modeling of Negative Feedback Mechanism]
+
+To reflect the time-lag structure of policies and facilitate research, we also set China's countermeasures as a lagged response to U.S. tariffs:
+
+\begin{equation}
+\text{Counter}_{CN,t} = f(\text{Tariff}_{US,t-k})
+\end{equation}
+
+\begin{equation}
+\text{Control}_{CN,t} = g(\text{Tariff}_{US,t-k})
+\end{equation}
+
+where $k$ is the lag period, which can be determined by data fitting. This mechanism also has a similar logical position to the "active substitution willingness" and "dependence amplification effect" in the soybean issue \cite{hudsonbay2025guide}.
+
+\subsection{Model Prediction and Correction}
+
+\subsubsection{Selection of Forecasting Models}
+
+Short-term forecast (1--2 years): The dominant factors are the direct impacts of price shocks and countermeasures, and most forecast results can be obtained by using regression coefficient estimation to measure the immediate effects.
+
+Medium-term forecast (3--5 years): Industrial output and employment are affected by factors such as supply chain migration and cost system restructuring, so we can adopt trend term extrapolation to simplify the model's prediction:
+
+\begin{equation}
+\Delta \ln(IP_{t+T}) = \Delta \ln(IP_t) \times (1 + \eta_{IP} T)
+\end{equation}
+
+\begin{equation}
+\Delta \ln(U_{t+T}) = \Delta \ln(U_t) \times (1 + \eta_{U} T)
+\end{equation}
+
+Here, $\eta_{IP}$ and $\eta_{U}$ are trend terms, which can be fitted based on historical data \cite{imf2025weo}.
+
+\subsubsection{Net Effect Analysis}
+
+Similar to the "net change in share" in the previous soybean issue, we can construct the following net effect indicators at the macro level:
+
+(1) Net effect of industrial production:
+\begin{equation}
+E_{IP} = 
+\beta_1 \Delta\ln(\text{Tariff}_{US})
+-
+\left(
+\beta_2 \Delta\ln(\text{Counter}_{CN})
++
+\beta_3 \Delta\ln(\text{Control}_{CN})
+\right)
+\end{equation}
+
+(2) Net effect of unemployment rate:
+\begin{equation}
+E_{U} = 
+- \delta_1 \Delta\ln(\text{Tariff}_{US})
++
+\left(
+\delta_2 \Delta\ln(\text{Counter}_{CN})
++
+\delta_3 \Delta\ln(\text{Control}_{CN})
+\right)
+\end{equation}
+
+\subsection{Prediction Results}
+\subsubsection{Short Term (1–2 Years)}
+
+U.S. manufacturing output may experience a structural rise in the short term, yet the inhibitory effect of countervailing tariffs on agriculture and export-oriented manufacturing, coupled with higher input costs, will offset part of the positive impact of tariffs; in contrast, the unemployment rate will struggle to fall rapidly due to the contraction of the export sector \cite{piie2025tariff}.
+
+\subsubsection{Medium Term (3–5 Years)}
+
+The cost of supply chain migration, the intensity of raw material controls, and global economic prosperity will all affect the medium-term performance of U.S. manufacturing. If countermeasures persist, there is a high probability that the growth rate of U.S. industrial output will be unsustainable, while the room for improvement in the unemployment rate remains limited, ultimately leading to the failure of "manufacturing reshoring" to form a stable trend \cite{worldbank2025prospects}.
+
+
+%参考文献
+\begin{thebibliography}{9}%宽度9
+\bibitem{whitehouse2025reciprocal} The White House, \textit{Presidential Actions}, https://www.whitehouse.gov, Accessed: 2025-10-20.
+\bibitem{yale2025tariffs} Yale University, \textit{Budget Lab}, https://budgetlab.yale.edu, Accessed: 2025-10-21.
+\bibitem{gacc2025stats} General Administration of Customs of the People's Republic of China, \textit{Statistics}, http://www.customs.gov.cn, Accessed: 2025-10-21.
+\bibitem{usitc2025data} U.S. International Trade Commission, \textit{DataWeb}, https://dataweb.usitc.gov, Accessed: 2025-10-22.
+\bibitem{hudsonbay2025guide} Hudson Bay Capital, \textit{Research}, https://www.hudsonbaycapital.com, Accessed: 2025-10-22.
+\bibitem{usda2025oilseeds} U.S. Department of Agriculture, \textit{Foreign Agricultural Service}, https://www.fas.usda.gov, Accessed: 2025-10-23.
+\bibitem{fao2025stat} Food and Agriculture Organization of the United Nations, \textit{FAOSTAT}, https://www.fao.org/faostat, Accessed: 2025-10-23.
+\bibitem{trademap2025} International Trade Centre, \textit{Trade Map}, https://www.trademap.org, Accessed: 2025-10-23.
+\bibitem{jama2025statistics} Japan Automobile Manufacturers Association, \textit{Statistics}, https://www.jama.or.jp/english, Accessed: 2025-10-24.
+\bibitem{bea2025trade} U.S. Bureau of Economic Analysis, \textit{International Data}, https://www.bea.gov/data/intl-trade-investment, Accessed: 2025-10-24.
+\bibitem{semiconductors2025state} Semiconductor Industry Association, \textit{Reports \& Resources}, https://www.semiconductors.org, Accessed: 2025-10-24.
+\bibitem{nist2025chips} National Institute of Standards and Technology, \textit{CHIPS for America}, https://www.nist.gov/chips, Accessed: 2025-10-24.
+\bibitem{ustreasury2025fiscal} U.S. Department of the Treasury, \textit{Fiscal Data}, https://fiscaldata.treasury.gov, Accessed: 2025-10-20.
+\bibitem{cbo2025budget} Congressional Budget Office, \textit{Publications}, https://www.cbo.gov, Accessed: 2025-10-21.
+\bibitem{imf2025weo} International Monetary Fund, \textit{World Economic Outlook}, https://www.imf.org/en/Publications/WEO, Accessed: 2025-10-22.
+\bibitem{worldbank2025prospects} The World Bank, \textit{Global Economic Prospects}, https://www.worldbank.org/en/publication/global-economic-prospects, Accessed: 2025-10-23.
+\bibitem{wto2025publications} World Trade Organization, \textit{Publications}, https://www.wto.org/english/res\_e/publications\_e/publications\_e.htm, Accessed: 2025-10-23.
+\bibitem{piie2025tariff} Peterson Institute for International Economics, \textit{Research}, https://www.piie.com, Accessed: 2025-10-20.
+\end{thebibliography}
+
+\newpage
+%附录
+
+\section{Appendix}
+\begin{lstlisting}[language=matlab,caption={The matlab Source code of Algorithm}]
+kk=2;[mdd,ndd]=size(dd);
+while ~isempty(V)
+[tmpd,j]=min(W(i,V));tmpj=V(j);
+for k=2:ndd
+[tmp1,jj]=min(dd(1,k)+W(dd(2,k),V));
+tmp2=V(jj);tt(k-1,:)=[tmp1,tmp2,jj];
+end
+tmp=[tmpd,tmpj,j;tt];[tmp3,tmp4]=min(tmp(:,1));
+if tmp3==tmpd, ss(1:2,kk)=[i;tmp(tmp4,2)];
+else,tmp5=find(ss(:,tmp4)~=0);tmp6=length(tmp5);
+if dd(2,tmp4)==ss(tmp6,tmp4)
+ss(1:tmp6+1,kk)=[ss(tmp5,tmp4);tmp(tmp4,2)];
+else, ss(1:3,kk)=[i;dd(2,tmp4);tmp(tmp4,2)];
+end;end
+dd=[dd,[tmp3;tmp(tmp4,2)]];V(tmp(tmp4,3))=[];
+[mdd,ndd]=size(dd);kk=kk+1;
+end; S=ss; D=dd(1,:);
+ \end{lstlisting}
+\begin{lstlisting}[language=c,caption={The lingo source code}]
+kk=2;
+[mdd,ndd]=size(dd);
+while ~isempty(V)
+    [tmpd,j]=min(W(i,V));tmpj=V(j);
+for k=2:ndd
+    [tmp1,jj]=min(dd(1,k)+W(dd(2,k),V));
+    tmp2=V(jj);tt(k-1,:)=[tmp1,tmp2,jj];
+end
+    tmp=[tmpd,tmpj,j;tt];[tmp3,tmp4]=min(tmp(:,1));
+if tmp3==tmpd, ss(1:2,kk)=[i;tmp(tmp4,2)];
+else,tmp5=find(ss(:,tmp4)~=0);tmp6=length(tmp5);
+if dd(2,tmp4)==ss(tmp6,tmp4)
+    ss(1:tmp6+1,kk)=[ss(tmp5,tmp4);tmp(tmp4,2)];
+else, ss(1:3,kk)=[i;dd(2,tmp4);tmp(tmp4,2)];
+end;
+end
+    dd=[dd,[tmp3;tmp(tmp4,2)]];V(tmp(tmp4,3))=[];
+    [mdd,ndd]=size(dd);
+    kk=kk+1;
+end;
+S=ss;
+D=dd(1,:);
+ \end{lstlisting}
+
+
+\end{document}

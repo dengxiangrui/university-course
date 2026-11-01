@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>反码核心概念交互演示</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;600&family=Noto+Sans+SC:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Noto Sans SC', sans-serif;
+        }
+        .code-font {
+            font-family: 'Fira Code', monospace;
+        }
+        .bit-box {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen pb-12">
+
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-8 px-4 shadow-lg mb-8">
+        <div class="max-w-5xl mx-auto">
+            <div class="flex items-center space-x-3 mb-2">
+                <span class="bg-white/20 p-2 rounded-lg"><i data-lucide="cpu" class="w-6 h-6"></i></span>
+                <span class="text-sm font-semibold tracking-wider uppercase opacity-90">计算机组成原理 · 教学辅助工具</span>
+            </div>
+            <h1 class="text-3xl md:text-4xl font-bold">反码（Ones' Complement）运作机制演示</h1>
+            <p class="mt-2 text-blue-100 max-w-2xl">
+                通过交互式动画，深度拆解反码的三大核心概念：逐位取反、循环进位与双零缺陷。
+            </p>
+        </div>
+    </header>
+
+    <main class="max-w-5xl mx-auto px-4 space-y-8">
+
+        <!-- 概念一：逐位取反 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 md:p-8">
+            <div class="flex items-start space-x-4 mb-6">
+                <div class="bg-blue-100 text-blue-600 p-3 rounded-xl">
+                    <i data-lucide="refresh-cw" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900">核心概念一：逐位取反 (Bitwise NOT)</h2>
+                    <p class="text-slate-500 mt-1">正数反码与原码相同；负数反码则是将对应正数的所有位（包括符号位）0变1，1变0。点击下方二进制位，观察取反效果：</p>
+                </div>
+            </div>
+
+            <div class="bg-slate-900 rounded-xl p-6 text-white">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                    <!-- 交互区域 -->
+                    <div>
+                        <div class="text-sm text-slate-400 mb-2">点击任意位手动修改 (8位二进制)：</div>
+                        <div class="flex justify-between items-center space-x-1 md:space-x-2 code-font mb-6">
+                            <!-- 8个可点击的二进制位 -->
+                            <div class="flex flex-col items-center">
+                                <span class="text-xs text-red-400 mb-1">符号位</span>
+                                <button onclick="toggleBit(0)" id="bit-0" class="bit-box w-10 h-12 md:w-12 md:h-14 bg-red-900/50 border-2 border-red-500 rounded-lg flex items-center justify-center text-xl md:text-2xl font-bold hover:bg-red-800">0</button>
+                            </div>
+                            <div class="w-[2px] h-12 bg-slate-700 self-end mb-1"></div>
+                            <div class="flex flex-col items-center">
+                                <span class="text-xs text-slate-500 mb-1">数值位</span>
+                                <button onclick="toggleBit(1)" id="bit-1" class="bit-box w-10 h-12 md:w-12 md:h-14 bg-slate-800 border-2 border-slate-700 rounded-lg flex items-center justify-center text-xl md:text-2xl font-bold hover:bg-slate-700">0</button>
+                            </div>
+                            <button onclick="toggleBit(2)" id="bit-2" class="bit-box w-10 h-12 md:w-12 md:h-14 bg-slate-800 border-2 border-slate-700 rounded-lg flex items-center justify-center text-xl md:text-2xl font-bold hover:bg-slate-700">0</button>
+                            <button onclick="toggleBit(3)" id="bit-3" class="bit-box w-10 h-12 md:w-12 md:h-14 bg-slate-800 border-2 border-slate-700 rounded-lg flex items-center justify-center text-xl md:text-2xl font-bold hover:bg-slate-700">1</button>
+                            <button onclick="toggleBit(4)" id="bit-4" class="bit-box w-10 h-12 md:w-12 md:h-14 bg-slate-800 border-2 border-slate-700 rounded-lg flex items-center justify-center text-xl md:text-2xl font-bold hover:bg-slate-700">1</button>
+                            <button onclick="toggleBit(5)" id="bit-5" class="bit-box w-10 h-12 md:w-12 md:h-14 bg-slate-800 border-2 border-slate-700 rounded-lg flex items-center justify-center text-xl md:text-2xl font-bold hover:bg-slate-700">0</button>
+                            <button onclick="toggleBit(6)" id="bit-6" class="bit-box w-10 h-12 md:w-12 md:h-14 bg-slate-800 border-2 border-slate-700 rounded-lg flex items-center justify-center text-xl md:text-2xl font-bold hover:bg-slate-700">1</button>
+                            <button onclick="toggleBit(7)" id="bit-7" class="bit-box w-10 h-12 md:w-12 md:h-14 bg-slate-800 border-2 border-slate-700 rounded-lg flex items-center justify-center text-xl md:text-2xl font-bold hover:bg-slate-700">0</button>
+                        </div>
+                        <div class="flex space-x-4">
+                            <button onclick="invertAll()" class="bg-indigo-600 hover:bg-indigo-500 text-white px-4 py-2 rounded-lg font-medium text-sm transition flex items-center space-x-2">
+                                <i data-lucide="shuffle" class="w-4 h-4"></i>
+                                <span>一键逐位取反</span>
+                            </button>
+                            <button onclick="resetBits()" class="bg-slate-800 hover:bg-slate-700 text-slate-300 px-4 py-2 rounded-lg font-medium text-sm transition">
+                                重置
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 动态解释面板 -->
+                    <div class="bg-slate-800/50 rounded-xl p-5 border border-slate-700/50 space-y-3">
+                        <h3 class="font-bold text-indigo-400">当前数值解析：</h3>
+                        <div class="grid grid-cols-2 gap-2 text-sm">
+                            <span class="text-slate-400">原码表示：</span>
+                            <span id="orig-val" class="code-font text-white font-semibold">00011010</span>
+                            <span class="text-slate-400">对应真值：</span>
+                            <span id="decimal-val" class="code-font text-emerald-400 font-semibold">+26</span>
+                            <span class="text-slate-400">逐位取反后：</span>
+                            <span id="inverted-val" class="code-font text-orange-400 font-semibold">11100101</span>
+                            <span class="text-slate-400">反码代表的负数：</span>
+                            <span id="neg-val" class="code-font text-red-400 font-semibold">-26</span>
+                        </div>
+                        <p class="text-xs text-slate-400 border-t border-slate-700 pt-2 mt-2">
+                            数学原理：\( (2^8 - 1) - 26 = 255 - 26 = 229 \) (即二进制 <span class="code-font text-orange-400">11100101</span>)。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- 概念二：循环进位 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 md:p-8">
+            <div class="flex items-start space-x-4 mb-6">
+                <div class="bg-orange-100 text-orange-600 p-3 rounded-xl">
+                    <i data-lucide="arrow-right-left" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900">核心概念二：循环进位 (End-Around Carry)</h2>
+                    <p class="text-slate-500 mt-1">反码加法中，若最高位（符号位）产生进位，该进位绝不能丢弃，必须“绕回”加到最低位。下面以 <b>+3 + (-2)</b> 为例演示：</p>
+                </div>
+            </div>
+
+            <!-- 模拟计算器 -->
+            <div class="bg-slate-50 rounded-xl p-6 border border-slate-200">
+                <div class="max-w-xl mx-auto">
+                    <!-- 步骤控制 -->
+                    <div class="flex justify-between items-center mb-6">
+                        <span class="text-sm font-bold text-slate-500 uppercase tracking-wider">演示步骤</span>
+                        <div class="flex space-x-2">
+                            <button id="prev-btn" onclick="prevStep()" class="bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium transition disabled:opacity-50" disabled>上一步</button>
+                            <button id="next-btn" onclick="nextStep()" class="bg-blue-600 hover:bg-blue-500 text-white px-4 py-1.5 rounded-lg text-sm font-medium transition">下一步</button>
+                            <button onclick="resetStep()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium transition">重置</button>
+                        </div>
+                    </div>
+
+                    <!-- 竖式计算面板 -->
+                    <div class="bg-white rounded-xl p-6 shadow-inner border border-slate-200/60 code-font text-lg md:text-xl relative overflow-hidden">
+
+                        <!-- 动态高亮遮罩/箭头 -->
+                        <div id="carry-arrow" class="absolute right-4 bottom-12 text-orange-500 font-bold text-sm flex flex-col items-center opacity-0 transition-all duration-500">
+                            <span>循环回卷 ↩</span>
+                            <i data-lucide="arrow-down" class="w-4 h-4 animate-bounce"></i>
+                        </div>
+
+                        <div class="space-y-4 max-w-[280px] mx-auto text-right">
+                            <!-- 被加数 -->
+                            <div class="flex justify-between items-center border-b border-dashed border-slate-100 pb-1">
+                                <span class="text-xs text-slate-400 font-sans">被加数 (+3)</span>
+                                <span class="tracking-widest font-semibold text-slate-700">0 0 1 1</span>
+                            </div>
+                            <!-- 加数 -->
+                            <div class="flex justify-between items-center border-b-2 border-slate-800 pb-2">
+                                <span class="text-xs text-slate-400 font-sans">加数 (-2反码)</span>
+                                <span class="tracking-widest font-semibold text-slate-700"><span class="text-slate-400 mr-2">+</span>1 1 0 1</span>
+                            </div>
+                            <!-- 临时结果 -->
+                            <div id="step-1-row" class="flex justify-between items-center transition-all duration-300 opacity-20">
+                                <span class="text-xs text-slate-400 font-sans">首次相加</span>
+                                <span class="tracking-widest font-semibold text-slate-800">
+                                    <span id="overflow-carry" class="bg-orange-100 text-orange-600 px-1 rounded transition-all duration-500">1</span> 0 0 0 0
+                                </span>
+                            </div>
+                            <!-- 循环加1 -->
+                            <div id="step-2-row" class="flex justify-between items-center transition-all duration-300 opacity-20 border-b-2 border-slate-400 pb-2">
+                                <span class="text-xs text-orange-600 font-sans font-bold">最高位进位回加</span>
+                                <span class="tracking-widest font-semibold text-orange-600">
+                                    + <span class="inline-block translate-x-[-4px]">1</span>
+                                </span>
+                            </div>
+                            <!-- 最终结果 -->
+                            <div id="step-3-row" class="flex justify-between items-center transition-all duration-300 opacity-20">
+                                <span class="text-xs text-emerald-600 font-sans font-bold">最终结果 (+1)</span>
+                                <span class="tracking-widest font-bold text-emerald-600 bg-emerald-50 px-2 py-1 rounded">0 0 0 1</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 步骤文字说明 -->
+                    <div class="mt-6 bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-lg">
+                        <h4 class="font-bold text-blue-900 mb-1" id="step-title">步骤 1: 准备数据</h4>
+                        <p class="text-sm text-blue-800" id="step-desc">我们要计算 +3 + (-2)。+3 的反码是 0011，-2 的反码是 1101。点击“下一步”开始相加。</p>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- 概念三：双零问题 -->
+        <section class="bg-white rounded-2xl shadow-sm border border-slate-100 p-6 md:p-8">
+            <div class="flex items-start space-x-4 mb-6">
+                <div class="bg-red-100 text-red-600 p-3 rounded-xl">
+                    <i data-lucide="alert-triangle" class="w-6 h-6"></i>
+                </div>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-900">核心概念三：双零问题 (The Two Zeros)</h2>
+                    <p class="text-slate-500 mt-1">反码最致命的缺陷之一：数值“零”在编码中占用了两个不同的位置，造成了编码浪费和硬件判零逻辑的复杂化。</p>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="bg-slate-50 rounded-xl p-5 border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center space-x-2 text-emerald-600 font-bold mb-2">
+                            <i data-lucide="plus-circle" class="w-5 h-5"></i>
+                            <span>正零 (+0)</span>
+                        </div>
+                        <p class="text-sm text-slate-600 mb-4">在反码中，正零的表示与原码一致，所有数值位和符号位均为 0。</p>
+                    </div>
+                    <div class="code-font text-2xl font-bold bg-white border border-slate-200 text-center py-4 rounded-lg tracking-widest text-slate-700 shadow-sm">
+                        00000000
+                    </div>
+                </div>
+
+                <div class="bg-slate-50 rounded-xl p-5 border border-slate-200 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center space-x-2 text-red-600 font-bold mb-2">
+                            <i data-lucide="minus-circle" class="w-5 h-5"></i>
+                            <span>负零 (-0)</span>
+                        </div>
+                        <p class="text-sm text-slate-600 mb-4">将正零“逐位取反”后，便得到了负零。它同样代表数值 0，但编码完全不同。</p>
+                    </div>
+                    <div class="code-font text-2xl font-bold bg-white border border-slate-200 text-center py-4 rounded-lg tracking-widest text-slate-700 shadow-sm">
+                        11111111
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 bg-amber-50 border border-amber-200 rounded-xl p-5 text-sm text-amber-900 flex items-start space-x-3">
+                <i data-lucide="lightbulb" class="w-5 h-5 text-amber-600 shrink-0 mt-0.5"></i>
+                <div>
+                    <span class="font-bold">为什么这是个问题？</span>
+                    在计算机硬件中，为了判断一个计算结果是否为0，CPU必须设计两套电路分别去匹配 <code class="bg-amber-100 px-1 rounded font-semibold">00000000</code> 和 <code class="bg-amber-100 px-1 rounded font-semibold">11111111</code>。这不仅浪费了一个宝贵的编码位置（导致8位反码只能表示 -127~127，而补码能表示 -128~127），还增加了芯片设计的复杂度。这也是为什么我们最终走向了<b>补码</b>。
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="max-w-5xl mx-auto px-4 mt-12 text-center text-slate-400 text-xs">
+        <p>© 2026 计算机科学教学辅助系统 · 启发式原理演示</p>
+    </footer>
+
+    <!-- JavaScript 逻辑 -->
+    <script>
+        // 初始化 Lucide 图标
+        lucide.createIcons();
+
+        // ================= 概念一：逐位取反逻辑 =================
+        let currentBits = [0, 0, 0, 1, 1, 0, 1, 0]; // 默认 00011010 (26)
+
+        function updateBitsUI() {
+            for (let i = 0; i < 8; i++) {
+                const bitBtn = document.getElementById(`bit-${i}`);
+                bitBtn.innerText = currentBits[i];
+                if (currentBits[i] === 1) {
+                    bitBtn.classList.remove('bg-slate-800', 'bg-red-900/50', 'border-slate-700', 'border-red-500');
+                    if (i === 0) {
+                        bitBtn.classList.add('bg-red-600', 'border-red-500', 'text-white');
+                    } else {
+                        bitBtn.classList.add('bg-indigo-600', 'border-indigo-500', 'text-white');
+                    }
+                } else {
+                    bitBtn.classList.remove('bg-indigo-600', 'bg-red-600', 'border-indigo-500', 'border-red-500', 'text-white');
+                    if (i === 0) {
+                        bitBtn.classList.add('bg-red-900/50', 'border-red-500', 'text-red-200');
+                    } else {
+                        bitBtn.classList.add('bg-slate-800', 'border-slate-700', 'text-slate-300');
+                    }
+                }
+            }
+
+            // 计算真值
+            const binaryStr = currentBits.join('');
+            document.getElementById('orig-val').innerText = binaryStr;
+
+            // 算真值 (原码转十进制)
+            let absVal = 0;
+            for (let i = 1; i < 8; i++) {
+                absVal += currentBits[i] * Math.pow(2, 7 - i);
+            }
+            const isNegative = currentBits[0] === 1;
+            const decVal = isNegative ? -absVal : absVal;
+            document.getElementById('decimal-val').innerText = (decVal >= 0 ? '+' : '') + decVal;
+
+            // 计算取反后的值
+            const invertedBits = currentBits.map(b => b === 1 ? 0 : 1);
+            const invertedStr = invertedBits.join('');
+            document.getElementById('inverted-val').innerText = invertedStr;
+            document.getElementById('neg-val').innerText = (decVal !== 0 ? '-' : '') + Math.abs(decVal);
+        }
+
+        function toggleBit(index) {
+            currentBits[index] = currentBits[index] === 1 ? 0 : 1;
+            updateBitsUI();
+        }
+
+        function invertAll() {
+            currentBits = currentBits.map(b => b === 1 ? 0 : 1);
+            updateBitsUI();
+        }
+
+        function resetBits() {
+            currentBits = [0, 0, 0, 1, 1, 0, 1, 0];
+            updateBitsUI();
+        }
+
+        // 初始化
+        updateBitsUI();
+
+
+        // ================= 概念二：循环进位步骤控制 =================
+        let currentStep = 0;
+        const steps = [
+            {
+                title: "步骤 1: 准备数据",
+                desc: "我们要计算 +3 + (-2)。在4位二进制中，+3 的反码是 0011，-2 的反码是 1101。点击“下一步”观察它们首次相加的结果。",
+                action: () => {
+                    document.getElementById('step-1-row').classList.add('opacity-20');
+                    document.getElementById('step-2-row').classList.add('opacity-20');
+                    document.getElementById('step-3-row').classList.add('opacity-20');
+                    document.getElementById('overflow-carry').classList.remove('bg-orange-500', 'text-white', 'scale-125');
+                    document.getElementById('carry-arrow').classList.add('opacity-0');
+                }
+            },
+            {
+                title: "步骤 2: 首次二进制相加",
+                desc: "0011 + 1101 得到 1 0000。注意！最高位（符号位）向左产生了一个溢出进位 1（橘黄色高亮显示）。在普通运算中这个 1 会被丢弃，但在反码中不行！",
+                action: () => {
+                    document.getElementById('step-1-row').classList.remove('opacity-20');
+                    document.getElementById('step-2-row').classList.add('opacity-20');
+                    document.getElementById('step-3-row').classList.add('opacity-20');
+                    document.getElementById('overflow-carry').classList.add('bg-orange-500', 'text-white', 'scale-125');
+                    document.getElementById('carry-arrow').classList.add('opacity-0');
+                }
+            },
+            {
+                title: "步骤 3: 进位回卷（循环进位）",
+                desc: "这就是最精妙的一步！我们将最高位溢出的这个 1，像一个环一样，重新绕回到最低位，准备加到末尾。",
+                action: () => {
+                    document.getElementById('step-1-row').classList.remove('opacity-20');
+                    document.getElementById('step-2-row').classList.remove('opacity-20');
+                    document.getElementById('step-3-row').classList.add('opacity-20');
+                    document.getElementById('overflow-carry').classList.remove('bg-orange-500', 'text-white', 'scale-125');
+                    document.getElementById('carry-arrow').classList.remove('opacity-0');
+                }
+            },
+            {
+                title: "步骤 4: 得到最终结果",
+                desc: "0000 加上回卷进来的 1，最终结果为 0001。换算成十进制就是 +1，计算完全正确！这完美避开了原码减法器设计的难题。",
+                action: () => {
+                    document.getElementById('step-1-row').classList.remove('opacity-20');
+                    document.getElementById('step-2-row').classList.remove('opacity-20');
+                    document.getElementById('step-3-row').classList.remove('opacity-20');
+                    document.getElementById('carry-arrow').classList.add('opacity-0');
+                }
+            }
+        ];
+
+        function updateStepUI() {
+            const step = steps[currentStep];
+            document.getElementById('step-title').innerText = step.title;
+            document.getElementById('step-desc').innerText = step.desc;
+            step.action();
+
+            // 按钮状态
+            document.getElementById('prev-btn').disabled = currentStep === 0;
+            document.getElementById('next-btn').disabled = currentStep === steps.length - 1;
+            if (currentStep === steps.length - 1) {
+                document.getElementById('next-btn').innerText = "演示完毕";
+            } else {
+                document.getElementById('next-btn').innerText = "下一步";
+            }
+        }
+
+        function nextStep() {
+            if (currentStep < steps.length - 1) {
+                currentStep++;
+                updateStepUI();
+            }
+        }
+
+        // 绑定键盘右键和左键方便演示
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'ArrowRight') {
+                nextStep();
+            } else if (event.key === 'ArrowLeft') {
+                prevStep();
+            }
+        });
+
+        function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                updateStepUI();
+            }
+        }
+
+        function resetStep() {
+            currentStep = 0;
+            updateStepUI();
+        }
+    </script>
+</body>
+</html>

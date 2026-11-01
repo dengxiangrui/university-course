@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="CMakeProjectFlavorService">
+    <option name="flavorId" value="CMakePlainProjectFlavor" />
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="2d17f22c-c1f8-4646-8c2d-295709bdab4c" name="更改" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="CMakeLists.txt" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
+  <component name="ProjectId" id="37IH3bnxrUwfKwF1AyHPgri93HY" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "C/C++ 文件.Array(lottery ticket).cpp.executor": "Run",
+    "C/C++ 文件.Class1.cpp.executor": "Run",
+    "C/C++ 文件.calculation of e.cpp.executor": "Run",
+    "C/C++ 文件.cerr  output.cpp.executor": "Run",
+    "C/C++ 文件.classes and customers.cpp.executor": "Run",
+    "C/C++ 文件.const.cpp (1).executor": "Run",
+    "C/C++ 文件.const.cpp.executor": "Run",
+    "C/C++ 文件.exchange.cpp.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.RadMigrateCodeStyle": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "RunOnceActivity.readMode.enableVisualFormatting": "true",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "deletionFromPopupRequiresConfirmation": "false",
+    "last_opened_file_path": "C:/Users/deng6833/Desktop/code",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "com.jetbrains.cidr.cpp.execution.gdbserver.debugtargets.NamedDebugTargetConfigurable",
+    "vue.rearranger.settings.migration": "true"
+  }
+}]]></component>
+  <component name="RunManager" selected="C/C++ 文件.Class1.cpp">
+    <configuration name="Array(lottery ticket).cpp" type="CppFileRunConfiguration" factoryName="CppFileRunConfiguration" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="test" TARGET_NAME="Array(lottery ticket).cpp" CONFIG_NAME="Array(lottery ticket).cpp">
+      <option name="sourceFile" value="Array(lottery ticket).cpp" />
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.runfile.CppFileBuildBeforeRunTaskProvider$BasicBuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Class1.cpp" type="CppFileRunConfiguration" factoryName="CppFileRunConfiguration" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="code" TARGET_NAME="Class1.cpp" CONFIG_NAME="Class1.cpp">
+      <option name="sourceFile" value="test\Class1.cpp" />
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.runfile.CppFileBuildBeforeRunTaskProvider$BasicBuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="cerr  output.cpp" type="CppFileRunConfiguration" factoryName="CppFileRunConfiguration" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" WORKING_DIR="file://$PROJECT_DIR$/bulid" PASS_PARENT_ENVS_2="true" PROJECT_NAME="code" TARGET_NAME="cerr  output.cpp" CONFIG_NAME="cerr  output.cpp">
+      <option name="sourceFile" value="test\cerr  output.cpp" />
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.runfile.CppFileBuildBeforeRunTaskProvider$BasicBuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="const.cpp" type="CppFileRunConfiguration" factoryName="CppFileRunConfiguration" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="code" TARGET_NAME="const.cpp" CONFIG_NAME="const.cpp">
+      <option name="sourceFile" value="test\const.cpp" />
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.runfile.CppFileBuildBeforeRunTaskProvider$BasicBuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="exchange.cpp" type="CppFileRunConfiguration" factoryName="CppFileRunConfiguration" temporary="true" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" EMULATE_TERMINAL="false" PASS_PARENT_ENVS_2="true" PROJECT_NAME="code" TARGET_NAME="exchange.cpp" CONFIG_NAME="exchange.cpp">
+      <option name="sourceFile" value="test\exchange.cpp" />
+      <method v="2">
+        <option name="com.jetbrains.cidr.cpp.runfile.CppFileBuildBeforeRunTaskProvider$BasicBuildBeforeRunTask" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="C/C++ 文件.Class1.cpp" />
+      <item itemvalue="C/C++ 文件.exchange.cpp" />
+      <item itemvalue="C/C++ 文件.const.cpp" />
+      <item itemvalue="C/C++ 文件.Array(lottery ticket).cpp" />
+      <item itemvalue="C/C++ 文件.cerr  output.cpp" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="C/C++ 文件.Class1.cpp" />
+        <item itemvalue="C/C++ 文件.cerr  output.cpp" />
+        <item itemvalue="C/C++ 文件.exchange.cpp" />
+        <item itemvalue="C/C++ 文件.const.cpp" />
+        <item itemvalue="C/C++ 文件.Array(lottery ticket).cpp" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="2d17f22c-c1f8-4646-8c2d-295709bdab4c" name="更改" comment="" />
+      <created>1766583469396</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1766583469396</updated>
+      <workItem from="1766583470584" duration="643000" />
+      <workItem from="1766584504303" duration="1477000" />
+      <workItem from="1766587733565" duration="762000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>

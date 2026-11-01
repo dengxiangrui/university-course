@@ -1,0 +1,152 @@
+\documentclass[12pt]{ctexart}
+
+\usepackage{amsmath, amssymb}
+\usepackage{geometry}
+\usepackage{setspace}
+\usepackage{booktabs}
+
+\geometry{a4paper, margin=1in}
+\onehalfspacing
+
+\begin{document}
+
+\section{问题分析}
+
+我们同样从政治经济学的角度来看待美国“对等关税”政策在宏观层面的冲击机制。与大豆等单一商品不同，宏观经济变量的变化是多个部门、多个冲击渠道共同作用的结果，具有明显的链式传导效应和部门间的异质反应。
+
+美国在 2025 年将贸易加权平均关税大幅提升至 20\% 以上，试图通过抬高进口价格来刺激本土制造业；而中国在反制关税与关键原材料出口管制方面的应对措施，则形成“价格冲击—成本抬升—外需受抑”的负反馈链条。工业生产总值（IP）与失业率（U）是衡量这一政策最终效果的两个核心宏观指标，其中 IP 反映美国制造业产出的净变化，而U 则反映美国劳动力市场的真实调整。
+
+因此，我们构建一个能够同时纳入“政策冲击（关税）”与“负反馈（反制关税、出口管制）”的多元回归框架，通过短期与中期的预测判断美国制造业是否真正呈现出明显的“回流趋势”。
+
+\section{模型建立}
+
+\subsection{模型选择}
+
+我们首先构建由两个方程组成的多元回归模型，以工业生产增速（$\Delta \ln(IP_t)$）与失业率变化（$\Delta \ln(U_t)$）为核心被解释变量。解释变量主要包括：
+
+\begin{itemize}
+    \item 美国平均有效关税 $\text{Tariff}_{US,t}$；
+    \item 中国反制关税 $\text{Counter}_{CN,t}$；
+    \item 中国关键原材料出口管制指数 $\text{Control}_{CN,t}$；
+    \item 全球 GDP 增长率 $\text{GDP}_{global,t}$。
+\end{itemize}
+
+这一框架与大豆问题中的修正 Armington 思路相一致，就是通过构造“正向推动—负向抑制”的冲击体系，从而将政策效应的结构性特征显式化。
+
+\subsection{参数校准}
+
+\subsubsection{关税冲击对制造业的影响强度 $\beta_1$}
+
+$\beta_1$ 表示美国关税提升带来的本土制造业扩张效应。可以根据美国历次制造业保护政策（如 1980s 钢铁关税、2018-2019 中美贸易摩擦）期间工业生产的弹性变化校准其大致区间。
+
+\subsubsection{反制关税与出口管制的负反馈强度 $\beta_2,\beta_3$}
+
+中国反制关税主要作用于美国农业与部分制造业外需端；出口管制主要推高美国中高端制造业的投入成本，典型案例包括稀土、图形处理器、磁性材料等历史事件，可以据此校准负向弹性范围。
+
+\subsubsection{全球宏观景气的拉动效应 $\beta_4$}
+
+全球 GDP 增速对美国工业生产和就业均具有强扰动性，可参考 IMF 季度数据与美国历次经济周期的共振程度进行校准。
+
+\section{模型分析}
+
+\subsection{工业生产总值模型}
+
+美国工业生产的变动由关税刺激与负反馈抑制共同决定，其回归结构为：
+
+\begin{equation}
+\Delta \ln(IP_t) = \alpha_0 + 
+\beta_1 \Delta \ln(\text{Tariff}_{US,t})
+- \beta_2 \Delta \ln(\text{Counter}_{CN,t})
+- \beta_3 \Delta \ln(\text{Control}_{CN,t})
++ \beta_4 \Delta \ln(\text{GDP}_{global,t})
++ \varepsilon_{IP,t}
+\end{equation}
+
+并且我们假设$\beta_1>0$，$\beta_2<0$，$\beta_3<0$，$\beta_4>0$ 。
+
+\subsection{失业率模型}
+
+失业率为政策效果在劳动力市场的最终体现，我们又假设模型为：
+
+\begin{equation}
+\Delta \ln(U_t) = \gamma_0 
+- \delta_1 \Delta \ln(\text{Tariff}_{US,t})
++ \delta_2 \Delta \ln(\text{Counter}_{CN,t})
++ \delta_3 \Delta \ln(\text{Control}_{CN,t})
+- \delta_4 \Delta \ln(\text{GDP}_{global,t})
++ \varepsilon_{U,t}
+\end{equation}
+
+我们再次假设$\delta_1>0$，$\delta_2,\delta_3>0$，$\delta_4>0$ 。
+
+\subsection{负反馈机制建模}
+
+为体现政策的时滞结构以及便于研究，我们还设定了中国反制措施为美国关税的滞后响应：
+
+\begin{equation}
+\text{Counter}_{CN,t} = f(\text{Tariff}_{US,t-k})
+\end{equation}
+
+\begin{equation}
+\text{Control}_{CN,t} = g(\text{Tariff}_{US,t-k})
+\end{equation}
+
+其中 $k$ 为滞后期，具体可通过数据拟合确定。该机制与大豆问题中的“主动替代意愿”和“依赖度放大效应”也具有类似的逻辑地位。
+
+\section{模型预测与结果}
+
+\subsection{预测模型选择}
+
+短期预测（1--2 年）：主导因素为价格冲击与反制措施的直接影响，采用回归系数估计即时效应就可以得出大部分预测结果。
+
+中期预测（3--5 年）：工业产出与就业受供应链迁移、成本体系重组等因素影响，我们就可采用趋势项外推来简化模型的预测：
+
+\begin{equation}
+\Delta \ln(IP_{t+T}) = \Delta \ln(IP_t) \times (1 + \eta_{IP} T)
+\end{equation}
+
+\begin{equation}
+\Delta \ln(U_{t+T}) = \Delta \ln(U_t) \times (1 + \eta_{U} T)
+\end{equation}
+
+这里面的 $\eta_{IP}$、$\eta_{U}$ 为趋势项，是可根据历史数据拟合的。
+
+\subsection{净效应分析}
+
+类似于在之前大豆问题中的“份额净变化”，宏观层面上我们还是可以构建如下的净效应指标：
+
+（1）工业生产净效应：
+\begin{equation}
+E_{IP} = 
+\beta_1 \Delta\ln(\text{Tariff}_{US})
+-
+\left(
+\beta_2 \Delta\ln(\text{Counter}_{CN})
++
+\beta_3 \Delta\ln(\text{Control}_{CN})
+\right)
+\end{equation}
+
+（2）失业率净效应：
+\begin{equation}
+E_{U} = 
+- \delta_1 \Delta\ln(\text{Tariff}_{US})
++
+\left(
+\delta_2 \Delta\ln(\text{Counter}_{CN})
++
+\delta_3 \Delta\ln(\text{Control}_{CN})
+\right)
+\end{equation}
+
+\section{结论}
+
+\subsection{短期（1–2 年）}
+
+美国制造业产出短期内可能出现结构性上升，但反制关税对农业与出口制造业的抑制、更高的投入成本等因素会抵消一部分关税的正向作用；而失业率却由于出口部门的收缩较难实现快速下降。
+
+\subsection{中期（3–5 年）}
+
+供应链迁移成本、原材料管制强度及全球经济景气均会影响美国制造业的中期表现。若反制措施持续，美国工业产出增速有很大概率难以维持，但失业率的改善却空间有限，最终会导致“制造业回流”无法形成稳定趋势。
+
+\end{document}

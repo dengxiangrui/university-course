@@ -1,0 +1,25 @@
+#include <iostream>
+#include <iomanip>
+using namespace std;
+int main()
+{
+    float f1 = 0.1f;
+    float fSum = 0.0f;
+    for (int i = 0; i < 1000; i++)
+    {
+        fSum += f1; // ??? 0.1 ????
+    }
+    double d1 = 0.1;
+    double dSum = 0.0;
+    for (int k = 0; k < 1000; k++)
+    {
+        dSum += d1; // ??? 0.1 ????
+    }
+    cout << setprecision(16); // ??????????????????16ฆห??งน????
+    cout << "float ?????:  " << fSum << endl;
+    cout << "double ?????: " << dSum << endl;
+    cout << "??????????:    100" << endl;
+    cout << 7.000000000998665421123667800 - 9 / 3 << endl; // ???????4.0000000000998665
+    cout << 7.00000 / 2 << endl;                           // ???3.5??????3.50000
+    return 0;
+}

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <title>两路归并兼求所有元素逆序数-按伪代码执行示例</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            line-height: 1.6;
+            color: #24292e;
+            max-width: 950px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f6f8fa;
+        }
+
+        h1,
+        h2,
+        h3,
+        h4 {
+            color: #1b1f23;
+            margin-top: 24px;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+
+        h1 {
+            border-bottom: 1px solid #eaecef;
+            padding-bottom: .3em;
+        }
+
+        h2 {
+            border-bottom: 1px solid #eaecef;
+            padding-bottom: .3em;
+        }
+
+        h3 {
+            font-size: 1.25em;
+        }
+
+        h4 {
+            font-size: 1em;
+        }
+
+        code {
+            font-family: "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+            background-color: rgba(27, 31, 35, .05);
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-size: 85%;
+        }
+
+        pre {
+            background-color: #f6f8fa;
+            border: 1px solid #e1e4e8;
+            border-radius: 6px;
+            padding: 16px;
+            overflow: auto;
+            line-height: 1.45;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 16px;
+            display: block;
+            overflow: auto;
+        }
+
+        table th,
+        table td {
+            border: 1px solid #dfe2e5;
+            padding: 6px 13px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        table tr:nth-child(2n) {
+            background-color: #f6f8fa;
+        }
+
+        table th {
+            background-color: #f0f3f6;
+            font-weight: 600;
+        }
+
+        ul,
+        ol {
+            padding-left: 2em;
+        }
+
+        li {
+            margin-bottom: 4px;
+        }
+
+        hr {
+            height: 0.25em;
+            padding: 0;
+            margin: 24px 0;
+            background-color: #e1e4e8;
+            border: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h2> 严格按照伪代码执行示例（左右各3个元素）</h2>
+
+    <p>为了<strong>极其严格</strong>地对照伪代码，先明确伪代码的变量含义和细节。</p>
+
+    <h3>前置约定与伪代码细读：</h3>
+    <ol>
+        <li><strong><code>i</code> 和 <code>j</code> 是原数组的全局索引</strong>。左半区间为 <code>[l, m]</code>，右半区间为
+            <code>[m+1, r]</code>。<code>i</code> 从 <code>l</code> 开始，<code>j</code> 从 <code>m+1</code> 开始。</li>
+        <li><strong><code>count</code> 数组按原索引对应</strong>。</li>
+        <li><strong>左半区间 <code>a[l..m]</code> 已经是升序排列的</strong>，右半区间 <code>a[m+1..r]</code> 也是升序排列的。</li>
+        <li><strong>伪代码第5行 <code>while i &lt;= m or j &lt;= r do</code></strong>：只要左、右还有元素，就继续循环。</li>
+        <li><strong>第6行 <code>if j &gt; r or (i &lt;= m and a_i &lt;= a_j)</code></strong>：
+            <ul>
+                <li>只要右半区空了，或者左边没空且 <code>a_i &lt;= a_j</code>，就走 <code>if</code> 分支（即取出左半区元素）。</li>
+                <li><strong>第10行 <code>count[i] ← count[i] + count[i-1]</code></strong>：前提是
+                    <code>i &lt;= m</code>。只有在出队左半区元素时（且它不是左半区的第一个元素），才把前一个左半区元素的计数累加给自己。</li>
+            </ul>
+        </li>
+        <li><strong>第12行 <code>else</code></strong>：即 <code>a_i &gt; a_j</code>（此时必定有 <code>i &lt;= m</code> 且
+            <code>j &lt;= r</code>），走 <code>else</code> 分支（取出右半区元素）。
+            <ul>
+                <li><strong>第14行 <code>count[i] ← count[i] + 1</code></strong>：<strong>注意！这里的 <code>i</code>
+                        是当前左半区未出队的第一个元素的索引</strong>。也就是说，右侧较小的元素 <code>a_j</code>，导致左半区<strong>当前指针 <code>i</code>
+                        及其后面所有未出队的元素</strong>都增加 1 个逆序对。伪代码采用“延迟计算”，先全记在当前的 <code>a_i</code> 头上。</li>
+            </ul>
+        </li>
+    </ol>
+
+    <hr>
+
+    <h3>示例 （混合情况，严格按伪代码执行）</h3>
+
+    <p><strong>初始数组 <code>a</code></strong>：<code>[4, 6, 8, 2, 5, 7]</code></p>
+    <ul>
+        <li>左半边：<code>l = 0, m = 2</code>，元素为 <code>a[0]=4, a[1]=6, a[2]=8</code></li>
+        <li>右半边：<code>m+1 = 3, r = 5</code>，元素为 <code>a[3]=2, a[4]=5, a[5]=7</code></li>
+        <li>辅助数组 <code>t</code> 长度为 6。</li>
+        <li><strong>初始 <code>count</code> 数组</strong>：<code>[0, 0, 0, 0, 0, 0]</code></li>
+    </ul>
+
+    <p><strong>初始化</strong>（伪代码第1~3行）：</p>
+    <ul>
+        <li><code>i = l = 0</code></li>
+        <li><code>j = m + 1 = 3</code></li>
+        <li><code>k = l = 0</code></li>
+    </ul>
+
+    <h4>第 1 次循环</h4>
+    <ul>
+        <li><strong>执行前</strong>：<code>i = 0</code>, <code>j = 3</code>, <code>k = 0</code></li>
+        <li><strong>第5行</strong>：<code>i(0) &lt;= 2</code> 或 <code>j(3) &lt;= 5</code>，满足条件，进入循环。</li>
+        <li><strong>第6行</strong>：判断 <code>if (j &gt; r) or (i &lt;= m and a[i] &lt;= a[j])</code>。
+            <ul>
+                <li><code>j=3 &gt; 5</code> 为假。</li>
+                <li><code>i=0 &lt;= 2</code> 为真，且 <code>a[0]=4 &lt;= a[3]=2</code> 为假。</li>
+                <li>整体为假，<strong>进入 <code>else</code> 分支</strong>。</li>
+            </ul>
+        </li>
+        <li><strong>第13行</strong>：<code>t[0] = a[3] = 2</code></li>
+        <li><strong>第14行</strong>：<code>count[0] = count[0] + 1</code>。<strong>修改的是 <code>count[0]</code></strong>。
+            <ul>
+                <li><code>count</code> 变为：<code>[1, 0, 0, 0, 0, 0]</code></li>
+            </ul>
+        </li>
+        <li><strong>第15行</strong>：<code>j = 3 + 1 = 4</code></li>
+        <li><strong>第17行</strong>：<code>k = 0 + 1 = 1</code></li>
+        <li><strong>执行后</strong>：<code>i = 0</code>, <code>j = 4</code>, <code>k = 1</code>。<code>t</code> 数组前 1 个元素为
+            <code>[2]</code>。</li>
+    </ul>
+
+    <h4>第 2 次循环</h4>
+    <ul>
+        <li><strong>执行前</strong>：<code>i = 0</code>, <code>j = 4</code>, <code>k = 1</code></li>
+        <li><strong>第5行</strong>：满足。</li>
+        <li><strong>第6行</strong>：判断 <code>if</code>。
+            <ul>
+                <li><code>j=4 &gt; 5</code> 为假。</li>
+                <li><code>i=0 &lt;= 2</code> 为真，且 <code>a[0]=4 &lt;= a[4]=5</code> 为真。</li>
+                <li>整体为真，<strong>进入 <code>if</code> 分支</strong>。</li>
+            </ul>
+        </li>
+        <li><strong>第7行</strong>：<code>t[1] = a[0] = 4</code></li>
+        <li><strong>第8行</strong>：<code>i = 0 + 1 = 1</code></li>
+        <li><strong>第9行</strong>：<code>if (i &lt;= m)</code>。此时 <code>i=1 &lt;= 2</code> 为真，<strong>进入</strong>。</li>
+        <li><strong>第10行</strong>：<code>count[1] = count[1] + count[0]</code>。<strong>修改的是
+                <code>count[1]</code></strong>。
+            <ul>
+                <li><code>count[1] = 0 + 1 = 1</code>。</li>
+                <li><code>count</code> 变为：<code>[1, 1, 0, 0, 0, 0]</code></li>
+            </ul>
+        </li>
+        <li><strong>第17行</strong>：<code>k = 1 + 1 = 2</code></li>
+        <li><strong>执行后</strong>：<code>i = 1</code>, <code>j = 4</code>, <code>k = 2</code>。<code>t</code> 数组前 2 个元素为
+            <code>[2, 4]</code>。</li>
+    </ul>
+
+    <h4>第 3 次循环</h4>
+    <ul>
+        <li><strong>执行前</strong>：<code>i = 1</code>, <code>j = 4</code>, <code>k = 2</code></li>
+        <li><strong>第5行</strong>：满足。</li>
+        <li><strong>第6行</strong>：判断 <code>if</code>。
+            <ul>
+                <li><code>i=1 &lt;= 2</code> 且 <code>a[1]=6 &lt;= a[4]=5</code> 为假。</li>
+                <li><strong>进入 <code>else</code> 分支</strong>。</li>
+            </ul>
+        </li>
+        <li><strong>第13行</strong>：<code>t[2] = a[4] = 5</code></li>
+        <li><strong>第14行</strong>：<code>count[1] = count[1] + 1</code>。<strong>修改的是 <code>count[1]</code></strong>。
+            <ul>
+                <li><code>count[1] = 1 + 1 = 2</code>。</li>
+                <li><code>count</code> 变为：<code>[1, 2, 0, 0, 0, 0]</code></li>
+            </ul>
+        </li>
+        <li><strong>第15行</strong>：<code>j = 4 + 1 = 5</code></li>
+        <li><strong>第17行</strong>：<code>k = 2 + 1 = 3</code></li>
+        <li><strong>执行后</strong>：<code>i = 1</code>, <code>j = 5</code>, <code>k = 3</code>。<code>t</code> 数组前 3 个元素为
+            <code>[2, 4, 5]</code>。</li>
+    </ul>
+
+    <h4>第 4 次循环</h4>
+    <ul>
+        <li><strong>执行前</strong>：<code>i = 1</code>, <code>j = 5</code>, <code>k = 3</code></li>
+        <li><strong>第5行</strong>：满足。</li>
+        <li><strong>第6行</strong>：判断 <code>if</code>。
+            <ul>
+                <li><code>i=1 &lt;= 2</code> 且 <code>a[1]=6 &lt;= a[5]=7</code> 为真。</li>
+                <li><strong>进入 <code>if</code> 分支</strong>。</li>
+            </ul>
+        </li>
+        <li><strong>第7行</strong>：<code>t[3] = a[1] = 6</code></li>
+        <li><strong>第8行</strong>：<code>i = 1 + 1 = 2</code></li>
+        <li><strong>第9行</strong>：<code>i=2 &lt;= 2</code> 为真。</li>
+        <li><strong>第10行</strong>：<code>count[2] = count[2] + count[1]</code>。<strong>修改的是
+                <code>count[2]</code></strong>。
+            <ul>
+                <li><code>count[2] = 0 + 2 = 2</code>。</li>
+                <li><code>count</code> 变为：<code>[1, 2, 2, 0, 0, 0]</code></li>
+            </ul>
+        </li>
+        <li><strong>第17行</strong>：<code>k = 3 + 1 = 4</code></li>
+        <li><strong>执行后</strong>：<code>i = 2</code>, <code>j = 5</code>, <code>k = 4</code>。<code>t</code> 数组前 4 个元素为
+            <code>[2, 4, 5, 6]</code>。</li>
+    </ul>
+
+    <h4>第 5 次循环</h4>
+    <ul>
+        <li><strong>执行前</strong>：<code>i = 2</code>, <code>j = 5</code>, <code>k = 4</code></li>
+        <li><strong>第5行</strong>：满足。</li>
+        <li><strong>第6行</strong>：判断 <code>if</code>。
+            <ul>
+                <li><code>i=2 &lt;= 2</code> 且 <code>a[2]=8 &lt;= a[5]=7</code> 为假。</li>
+                <li><strong>进入 <code>else</code> 分支</strong>。</li>
+            </ul>
+        </li>
+        <li><strong>第13行</strong>：<code>t[4] = a[5] = 7</code></li>
+        <li><strong>第14行</strong>：<code>count[2] = count[2] + 1</code>。<strong>修改的是 <code>count[2]</code></strong>。
+            <ul>
+                <li><code>count[2] = 2 + 1 = 3</code>。</li>
+                <li><code>count</code> 变为：<code>[1, 2, 3, 0, 0, 0]</code></li>
+            </ul>
+        </li>
+        <li><strong>第15行</strong>：<code>j = 5 + 1 = 6</code></li>
+        <li><strong>第17行</strong>：<code>k = 4 + 1 = 5</code></li>
+        <li><strong>执行后</strong>：<code>i = 2</code>, <code>j = 6</code>, <code>k = 5</code>。<code>t</code> 数组前 5 个元素为
+            <code>[2, 4, 5, 6, 7]</code>。</li>
+    </ul>
+
+    <h4>第 6 次循环</h4>
+    <ul>
+        <li><strong>执行前</strong>：<code>i = 2</code>, <code>j = 6</code>, <code>k = 5</code></li>
+        <li><strong>第5行</strong>：<code>i(2) &lt;= 2</code> 满足。</li>
+        <li><strong>第6行</strong>：判断 <code>if</code>。
+            <ul>
+                <li><code>j=6 &gt; 5</code> 为真。</li>
+                <li><strong>进入 <code>if</code> 分支</strong>。</li>
+            </ul>
+        </li>
+        <li><strong>第7行</strong>：<code>t[5] = a[2] = 8</code></li>
+        <li><strong>第8行</strong>：<code>i = 2 + 1 = 3</code></li>
+        <li><strong>第9行</strong>：<code>i=3 &lt;= 2</code> 为假。<strong>不进入</strong>。</li>
+        <li><strong>第17行</strong>：<code>k = 5 + 1 = 6</code></li>
+        <li><strong>执行后</strong>：<code>i = 3</code>, <code>j = 6</code>, <code>k = 6</code>。<code>t</code> 数组为
+            <code>[2, 4, 5, 6, 7, 8]</code>。</li>
+    </ul>
+
+    <h4>退出循环及收尾</h4>
+    <ul>
+        <li><strong>第5行</strong>：<code>i(3) &lt;= 2</code> 假，<code>j(6) &lt;= 5</code> 假。不满足，退出循环。</li>
+        <li><strong>第19-21行</strong>：将 <code>t</code> 复制回 <code>a</code>。
+            <ul>
+                <li><code>a</code> 变为：<code>[2, 4, 5, 6, 7, 8]</code></li>
+                <li><code>count</code> 最终状态：<code>[1, 2, 3, 0, 0, 0]</code></li>
+            </ul>
+        </li>
+    </ul>
+
+    <hr>
+
+    <h3>示例 结果验证与严格剖析</h3>
+
+    <ul>
+        <li><strong><code>4</code>（原下标 0）</strong>：右侧比它小的只有 <code>2</code>。最终 <code>count[0] = 1</code>。（正确）</li>
+        <li><strong><code>6</code>（原下标 1）</strong>：右侧比它小的有 <code>2, 5</code>。最终 <code>count[1] = 2</code>。（正确）</li>
+        <li><strong><code>8</code>（原下标 2）</strong>：右侧比它小的有 <code>2, 5, 7</code>。最终 <code>count[2] = 3</code>。（正确）</li>
+    </ul>
+
+    <h4>严格对应伪代码的修改点总结：</h4>
+
+    <table>
+        <thead>
+            <tr>
+                <th>步骤</th>
+                <th>操作</th>
+                <th>修改的 <code>count</code> 索引</th>
+                <th>修改逻辑的意义</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>第1次循环</td>
+                <td><code>else</code> 分支（出右元素）</td>
+                <td><code>count[0]</code></td>
+                <td>元素 <code>2</code> 比左半区当前未出队的 <code>4</code> 小，记为 <code>4</code> 的贡献。</td>
+            </tr>
+            <tr>
+                <td>第2次循环</td>
+                <td><code>if</code> 分支（出左元素）</td>
+                <td><code>count[1]</code></td>
+                <td>元素 <code>4</code> 出队，把它的贡献传给下一个左半区元素 <code>6</code>。</td>
+            </tr>
+            <tr>
+                <td>第3次循环</td>
+                <td><code>else</code> 分支（出右元素）</td>
+                <td><code>count[1]</code></td>
+                <td>元素 <code>5</code> 比左半区当前未出队的 <code>6</code> 小，记为 <code>6</code> 的贡献（此时 <code>count[1]</code> 累加变成了
+                    <code>2</code>）。</td>
+            </tr>
+            <tr>
+                <td>第4次循环</td>
+                <td><code>if</code> 分支（出左元素）</td>
+                <td><code>count[2]</code></td>
+                <td>元素 <code>6</code> 出队，把它的贡献传给下一个左半区元素 <code>8</code>。</td>
+            </tr>
+            <tr>
+                <td>第5次循环</td>
+                <td><code>else</code> 分支（出右元素）</td>
+                <td><code>count[2]</code></td>
+                <td>元素 <code>7</code> 比左半区当前未出队的 <code>8</code> 小，记为 <code>8</code> 的贡献（此时 <code>count[2]</code> 累加变成了
+                    <code>3</code>）。</td>
+            </tr>
+            <tr>
+                <td>第6次循环</td>
+                <td><code>if</code> 分支（出左元素）</td>
+                <td>无</td>
+                <td>元素 <code>8</code> 出队，但因为它是左半区最后一个（<code>i=3 &gt; m=2</code>），<strong>触发第9行的
+                        <code>if i &lt;= m</code> 拦截</strong>，不再传递。</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h3>核心结论</h3>
+    <p>这版伪代码极其巧妙。<strong>第14行</strong>在右半区元素出队时，把逆序数记在左半区<strong>当前队列首部</strong>（即 <code>i</code>
+        指向的元素）头上；而<strong>第10行</strong>在左半区元素出队时，把队列首部的计数交给下一个元素。这种通过“队列指针平移”来传递计数的做法，完美避免了遍历更新，实现了 O(n) 的合并效率。</p>
+    <p>
+        总之，这段伪代码是一种“延迟计算”的手法。在处理跨区间的逆序对时，利用左半区间有序的特性，右侧小元素的贡献统一先记在左半边最靠前的未出列元素头上（第14行），随后通过前缀和（第10行）如多米诺骨牌般往下传递，不仅省去了额外变量，还避免了对左半边所有剩余元素循环更新的O(n2)
+        操作，极其优雅且高效。
+    </p>
+
+</body>
+
+</html>

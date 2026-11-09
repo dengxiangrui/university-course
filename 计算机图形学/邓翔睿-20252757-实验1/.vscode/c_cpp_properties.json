@@ -1,0 +1,16 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/src",
+                "D:/msys64/ucrt64/include"
+            ],
+            "defines": ["_WIN32"],
+            "compilerPath": "D:/msys64/ucrt64/bin/gcc.exe",
+            "cStandard": "c17",
+            "intelliSenseMode": "windows-gcc-x64"
+        }
+    ],
+    "version": 4
+}

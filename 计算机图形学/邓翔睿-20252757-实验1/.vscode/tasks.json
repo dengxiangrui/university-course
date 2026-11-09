@@ -1,0 +1,48 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build GraphicsExp1",
+            "type": "shell",
+            "command": "D:/msys64/ucrt64/bin/gcc.exe",
+            "args": [
+                "src/main.c",
+                "-o",
+                "build/GraphicsExp1.exe",
+                "-lfreeglut",
+                "-lglu32",
+                "-lopengl32"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "PATH": "D:\\msys64\\ucrt64\\bin;D:\\msys64\\usr\\bin;${env:PATH}"
+                }
+            },
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "detail": "用 MSYS2 ucrt64 gcc 编译 OpenGL 实验程序"
+        },
+        {
+            "label": "run GraphicsExp1",
+            "type": "shell",
+            "command": "./build/GraphicsExp1.exe",
+            "options": {
+                "cwd": "${workspaceFolder}",
+                "env": {
+                    "PATH": "D:\\msys64\\ucrt64\\bin;${env:PATH}"
+                }
+            },
+            "dependsOn": "build GraphicsExp1",
+            "detail": "编译并运行实验程序窗口",
+            "problemMatcher": [
+                "$gcc"
+            ]
+        }
+    ]
+}

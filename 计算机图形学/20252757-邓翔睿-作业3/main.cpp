@@ -1,5 +1,6 @@
 #include <iostream>
 #include <cmath>
+#include <fstream>
 #include <opencv2/opencv.hpp>
 
 #include "global.hpp"
@@ -116,8 +117,8 @@ Eigen::Vector3f texture_fragment_shader(const fragment_shader_payload& payload)
     if (payload.texture)
     {
         // TODO: Get the texture value at the texture coordinates of the current fragment
-        // 使用双线性插值（提高项）；若想看最近邻效果可改回 getColor
-        return_color = payload.texture->getColorBilinear(payload.tex_coords.x(), payload.tex_coords.y());
+        // 基础项：使用 Texture 类提供的常规采样接口 getColor
+        return_color = payload.texture->getColor(payload.tex_coords.x(), payload.tex_coords.y());
     }
     Eigen::Vector3f texture_color;
     texture_color << return_color.x(), return_color.y(), return_color.z();
@@ -152,9 +153,58 @@ Eigen::Vector3f texture_fragment_shader(const fragment_shader_payload& payload)
         Eigen::Vector3f H = (Ldir + Vdir).normalized();
         Eigen::Vector3f n = normal.normalized();
 
-        Eigen::Vector3f ambient = ka * amb_light_intensity;
-        Eigen::Vector3f diffuse = kd * light.intensity * std::max(n.dot(Ldir), 0.0f) / r2;
-        Eigen::Vector3f specular = ks * light.intensity * std::pow(std::max(n.dot(H), 0.0f), p) / r2;
+        Eigen::Vector3f ambient = ka.cwiseProduct(amb_light_intensity);
+        Eigen::Vector3f diffuse = kd.cwiseProduct(light.intensity) * std::max(n.dot(Ldir), 0.0f) / r2;
+        Eigen::Vector3f specular = ks.cwiseProduct(light.intensity) * std::pow(std::max(n.dot(H), 0.0f), p) / r2;
+
+        result_color += ambient + diffuse + specular;
+    }
+
+    return result_color * 255.f;
+}
+
+// 双线性采样版本的纹理着色器（提高项：用于与常规采样结果做对比）
+Eigen::Vector3f texture_bilinear_fragment_shader(const fragment_shader_payload& payload)
+{
+    Eigen::Vector3f return_color = {0, 0, 0};
+    if (payload.texture)
+    {
+        return_color = payload.texture->getColorBilinear(payload.tex_coords.x(), payload.tex_coords.y());
+    }
+    Eigen::Vector3f texture_color;
+    texture_color << return_color.x(), return_color.y(), return_color.z();
+
+    Eigen::Vector3f ka = Eigen::Vector3f(0.005, 0.005, 0.005);
+    Eigen::Vector3f kd = texture_color / 255.f;
+    Eigen::Vector3f ks = Eigen::Vector3f(0.7937, 0.7937, 0.7937);
+
+    auto l1 = light{{20, 20, 20}, {500, 500, 500}};
+    auto l2 = light{{-20, 20, 0}, {500, 500, 500}};
+
+    std::vector<light> lights = {l1, l2};
+    Eigen::Vector3f amb_light_intensity{10, 10, 10};
+    Eigen::Vector3f eye_pos{0, 0, 10};
+
+    float p = 150;
+
+    Eigen::Vector3f color = texture_color;
+    Eigen::Vector3f point = payload.view_pos;
+    Eigen::Vector3f normal = payload.normal;
+
+    Eigen::Vector3f result_color = {0, 0, 0};
+
+    for (auto& light : lights)
+    {
+        Eigen::Vector3f Ldir = light.position - point;
+        float r2 = Ldir.dot(Ldir);
+        Ldir.normalize();
+        Eigen::Vector3f Vdir = (eye_pos - point).normalized();
+        Eigen::Vector3f H = (Ldir + Vdir).normalized();
+        Eigen::Vector3f n = normal.normalized();
+
+        Eigen::Vector3f ambient = ka.cwiseProduct(amb_light_intensity);
+        Eigen::Vector3f diffuse = kd.cwiseProduct(light.intensity) * std::max(n.dot(Ldir), 0.0f) / r2;
+        Eigen::Vector3f specular = ks.cwiseProduct(light.intensity) * std::pow(std::max(n.dot(H), 0.0f), p) / r2;
 
         result_color += ambient + diffuse + specular;
     }
@@ -193,9 +243,9 @@ Eigen::Vector3f phong_fragment_shader(const fragment_shader_payload& payload)
         Eigen::Vector3f H = (Ldir + Vdir).normalized();
         Eigen::Vector3f n = normal.normalized();
 
-        Eigen::Vector3f ambient = ka * amb_light_intensity;
-        Eigen::Vector3f diffuse = kd * light.intensity * std::max(n.dot(Ldir), 0.0f) / r2;
-        Eigen::Vector3f specular = ks * light.intensity * std::pow(std::max(n.dot(H), 0.0f), p) / r2;
+        Eigen::Vector3f ambient = ka.cwiseProduct(amb_light_intensity);
+        Eigen::Vector3f diffuse = kd.cwiseProduct(light.intensity) * std::max(n.dot(Ldir), 0.0f) / r2;
+        Eigen::Vector3f specular = ks.cwiseProduct(light.intensity) * std::pow(std::max(n.dot(H), 0.0f), p) / r2;
 
         result_color += ambient + diffuse + specular;
     }
@@ -262,9 +312,9 @@ Eigen::Vector3f displacement_fragment_shader(const fragment_shader_payload& payl
         Eigen::Vector3f Vdir = (eye_pos - point).normalized();
         Eigen::Vector3f H = (Ldir + Vdir).normalized();
 
-        Eigen::Vector3f ambient = ka * amb_light_intensity;
-        Eigen::Vector3f diffuse = kd * light.intensity * std::max(normal.dot(Ldir), 0.0f) / r2;
-        Eigen::Vector3f specular = ks * light.intensity * std::pow(std::max(normal.dot(H), 0.0f), p) / r2;
+        Eigen::Vector3f ambient = ka.cwiseProduct(amb_light_intensity);
+        Eigen::Vector3f diffuse = kd.cwiseProduct(light.intensity) * std::max(normal.dot(Ldir), 0.0f) / r2;
+        Eigen::Vector3f specular = ks.cwiseProduct(light.intensity) * std::pow(std::max(normal.dot(H), 0.0f), p) / r2;
 
         result_color += ambient + diffuse + specular;
     }
@@ -331,10 +381,18 @@ int main(int argc, const char** argv)
 
     std::string filename = "output.png";
     objl::Loader Loader;
-    std::string obj_path = "../models/spot/";
+
+    // 可选的第三个参数用于切换模型（提高项：尝试更多模型）；缺省仍为 spot
+    std::string model_name = "spot";
+    if (argc >= 4) model_name = std::string(argv[3]);
+
+    std::string obj_path = "../models/" + model_name + "/";
+    std::string obj_file = obj_path + model_name + ".obj";
+    if (model_name == "spot") obj_file = obj_path + "spot_triangulated_good.obj";
 
     // Load .obj File
-    bool loadout = Loader.LoadFile("../models/spot/spot_triangulated_good.obj");
+    bool loadout = Loader.LoadFile(obj_file);
+    if (!loadout) { std::cout << "failed to load: " << obj_file << "\n" << std::flush; }
     for(auto mesh:Loader.LoadedMeshes)
     {
         for(int i=0;i<mesh.Vertices.size();i+=3)
@@ -350,10 +408,27 @@ int main(int argc, const char** argv)
         }
     }
 
+    std::cout << "loaded meshes: " << TriangleList.size() << "\n" << std::flush;
+
     rst::rasterizer r(700, 700);
 
+    // per-model default texture; empty means "no texture"
     auto texture_path = "hmap.jpg";
-    r.set_texture(Texture(obj_path + texture_path));
+    if (model_name == "cube") texture_path = "wall.tif";
+    else if (model_name == "rock") texture_path = "rock.png";
+    else if (model_name == "Crate") texture_path = "crate_1.jpg";
+    else if (model_name == "bunny") texture_path = "";
+
+    auto set_tex_if_exists = [&r, &obj_path](const std::string& tp) {
+        if (tp.empty()) return false;
+        std::ifstream f(obj_path + tp, std::ios::binary);
+        if (!f.good()) return false;
+        r.set_texture(Texture(obj_path + tp));
+        return true;
+    };
+
+    if (set_tex_if_exists(texture_path)) std::cout << "texture loaded: " << texture_path << "\n" << std::flush;
+    else std::cout << "no texture for model " << model_name << "\n" << std::flush;
 
     std::function<Eigen::Vector3f(fragment_shader_payload)> active_shader = phong_fragment_shader;
 
@@ -362,29 +437,46 @@ int main(int argc, const char** argv)
         command_line = true;
         filename = std::string(argv[1]);
 
-        if (argc == 3 && std::string(argv[2]) == "texture")
+        if (argc >= 3 && std::string(argv[2]) == "texture")
         {
             std::cout << "Rasterizing using the texture shader\n";
             active_shader = texture_fragment_shader;
-            texture_path = "spot_texture.png";
-            r.set_texture(Texture(obj_path + texture_path));
+            set_tex_if_exists("spot_texture.png") || set_tex_if_exists(texture_path);
         }
-        else if (argc == 3 && std::string(argv[2]) == "normal")
+        else if (argc >= 3 && std::string(argv[2]) == "texture_bilinear")
+        {
+            std::cout << "Rasterizing using the texture shader (bilinear sampling)\n";
+            active_shader = texture_bilinear_fragment_shader;
+            set_tex_if_exists("spot_texture.png") || set_tex_if_exists(texture_path);
+        }
+        else if (argc >= 3 && std::string(argv[2]) == "texture_small")
+        {
+            std::cout << "Rasterizing with a 64x64 texture (bilinear sampling)\n";
+            active_shader = texture_bilinear_fragment_shader;
+            set_tex_if_exists("spot_texture_small.png") || set_tex_if_exists(texture_path);
+        }
+        else if (argc >= 3 && std::string(argv[2]) == "texture_small_nn")
+        {
+            std::cout << "Rasterizing with a 64x64 texture (nearest sampling)\n";
+            active_shader = texture_fragment_shader;
+            set_tex_if_exists("spot_texture_small.png") || set_tex_if_exists(texture_path);
+        }
+        else if (argc >= 3 && std::string(argv[2]) == "normal")
         {
             std::cout << "Rasterizing using the normal shader\n";
             active_shader = normal_fragment_shader;
         }
-        else if (argc == 3 && std::string(argv[2]) == "phong")
+        else if (argc >= 3 && std::string(argv[2]) == "phong")
         {
             std::cout << "Rasterizing using the phong shader\n";
             active_shader = phong_fragment_shader;
         }
-        else if (argc == 3 && std::string(argv[2]) == "bump")
+        else if (argc >= 3 && std::string(argv[2]) == "bump")
         {
             std::cout << "Rasterizing using the bump shader\n";
             active_shader = bump_fragment_shader;
         }
-        else if (argc == 3 && std::string(argv[2]) == "displacement")
+        else if (argc >= 3 && std::string(argv[2]) == "displacement")
         {
             std::cout << "Rasterizing using the bump shader\n";
             active_shader = displacement_fragment_shader;
